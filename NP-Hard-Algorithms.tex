@@ -610,4 +610,147 @@ so $|C_{x''} \cap H_{x''}| < |C_{x'} \cap H_{x'}$ which contradicts to choice of
 $C_{x'} \cap H_{x'} = \emptyset$, holds our claim. 
 \end{proof}
 
+\textbf{Remark} During the proof, we construct the algorithmic way to convert any optimal LPVC solutions into half-integral optimal LPVC solution. 
+Since we can obtain any LPVC solution in polynomial time and above algorithm also, 
+we can find half-integral optimal LPVC solution $x^*$ in polynomial time always. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=green!75!black,title=Obtain Half-Integral Solution]
+
+For given graph $G = (V, E)$, we can obtain half-integral optimal LPVC solution $x^*$ in polynomial time.
+And define 
+\[V_a(x^*) = \{v \in V | x^*_v = a\}\]
+Then here, crown decomposition w.r.t. $x^*$ is $(V_{0.5}, V_1, V_0)$. 
+\end{tcolorbox}
+
+\begin{lem}
+    
+For $G' = G[V_{0.5}]$, $\forall v \in G', x'_v = 0.5$ is an optimal solution of LPVC of $G'$.
+
+\end{lem}
+
+\begin{proof}
+    
+Very easy. We can observe that, on the crown decomposition of $G$, all $V_{0.5}$ vertices are incident with $V_{0.5}$ itself or $V_1$.
+So, if there exists another optimal solution than $x'$, we can transplant that solution directly in $G$, then we can make more optimal solution to LPVC of $G$. 
+This occur contradiction, so $x'$ is an optimal solution of LPVC of $G[V_{0.5}]$. 
+
+\end{proof}
+
+\begin{lem}
+
+There exists an optimal vertex cover containing $V_1$. 
+
+\end{lem}
+
+\begin{proof}
+    
+Let $S$ be any optimal vertex cover of $G$. Then, w.r.t. the crown decomposition of $G$ by $(V_{0.5}, V_1, V_0)$, 
+we can define 
+\[S_0 = S \cap V_0, \quad S_{0.5} = S \cap V_{0.5}, \quad S_1 = S \cap V_1\]
+Then let's construct new set 
+\[S' = (S \setminus S_0) \cup V_1\]
+i.e., replace all cover vertices in $C$ into remaining vertices in $H$. One can be easily observed, $S'$ is a vertex cover of $G$. 
+So, to check $S'$ also an optimal vertex cover, we just need to check that number of removed vertices ($|S_0|$) is larger or equal than number of added vertices ($|V_1 \setminus S_1|$). 
+Not too hard to see. Imagine the crown decomposition diagram. Since $S$ was vertex cover, all the edges are covered. It means that, there aren't any edges between 
+$V_0 \setminus S_0$ and $V_1 \setminus S_1$. So, $N(V_1 \setminus S_1) \cap V_0 \subseteq S_0$. 
+And according to the Lemma 2.3.1., 
+\[|V_1 \setminus S_1| \leq |N(V_1 \setminus S_1) \cap V_0| \leq |S_0|\]
+This completes the proof.
+
+\end{proof}
+
+\begin{lem}
+    
+The instance $I' = (G', k')$ is equivalent to $I = (G, k)$ where $G' = G[V_{0.5}]$ and $k' = k - |V_1|$. 
+Furthermore, it holds that $k' - lp^*(G[V_{0.5}]) = k - lp^*(G)$
+
+\end{lem}
+
+\begin{proof}
+    
+Let's prove that $I' \iff I$ first. 
+
+($\Rightarrow$) 
+Suppose that $(G', k')$ is Yes instance. Then, take a vertex cover $S'$ for $G'$ whose size is at most $k'$. Then, for $G$, just set $S = S' \cup V_1$. 
+It is clearly vertex cover of $G$ and \[|S| = |S'| + |V_1| \leq k' + |V_1| = k\] so $(G, k)$ is Yes instance. 
+
+($\Leftarrow$)
+Suppose that $(G, k)$ is Yes instance. Then, by Leamma 2.3.4. there exists an optimal vertex cover $S$ containing $V_1$. 
+Then, $S_{1/2} = S \setminus V_1 \subseteq V_{1/2}$ holds. Then, this cover all the vertices in $V_{1/2} \setminus S_{1/2}$ since 
+if not, it is contradicts to optimal LPVC solution. So, $S_{1/2}$ is vertex cover of $G[V_{1/2}]$. However, since $|S| \leq k$, \[|S_{1/2}| = |S| - |V_1| \leq k - |V_1| = k'\]
+So, $(G', k')$ is Yes instance. 
+
+For the further statement, we already have lemma that $lp^*(G[V_{0.5}]) = \frac{1}{2}|V_{1/2}|$. 
+And for optimal LPVC half-integral solution, $lp^*(G) = |V_1| + \frac{1}{2}|V_{1/2}|$. So the claim holds. 
+\end{proof}
+
+\textbf{Remark} We show that $\forall v \in V_{1/2}, x^*_v = 1/2$ can be optimal LPVC solution for $G[V_{1/2}]$. It does not guarantee that 
+it is unique. 
+
+\vspace{4mm}
+
+Now, with Lemma 2.3.5. we can reduce(or preprocess) our original instance $(G, k)$. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Reduction Rule of LPVC]
+
+Let $(G, k)$ be given instance. 
+\begin{enumerate}
+    \item For every half-integral optimal LPVC solution $y^*$ of $(G, k)$,  
+    \item If there aren't any vertex $v$ such that $y^*_v = 1$, then end. 
+    \item If such $v$ exists, construct $(G[V_{1/2}(y^*)], k - |V_1(y^*)|)$
+\end{enumerate}
+It holds because of Lemma 2.3.5.
+\end{tcolorbox}
+
+With apply forever this rule, we finally obtain $(G', k')$ whose optimal half-integral LPVC solution is 
+$\forall v \in V(G'), x^*_v = 1/2$. Then, we can construct new \textsc{Vertex Cover} algorithm. 
+
+\begin{algorithm}
+    
+\caption{$\CO(4^{k-lp^*(G)})$-time algorithm for Vertex Cover}
+
+\begin{algorithmic}[1]
+\Procedure{\textbf{VC-above-LP}}{$G, k$}
+\State $(G, k) \gets$ Apply reduction rule until converge
+\State // Here, all-$\frac{1}{2}$ is the unique half-integral optimal solution. 
+\If{$k < lp^*(G) = \frac{1}{2}|V(G)|$} 
+    \State \Return No \Comment{We observed this fact}
+\ElsIf{$k \geq 2 \cdot lp^*(G) = |V(G)|$}
+    \State \Return Yes \Comment{Because we can pick every vertices}
+\Else   
+    \State $uv \gets Pick(E(G))$
+    \State \Return \textbf{VC-above-LP}$(G-u, k-1)$ $\vee$ \textbf{VC-above-LP}$(G-v, k-1)$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+
+\end{algorithm}
+
+It is easy to see that, this algorithm works correctly. Let's consider following measure: 
+\[\mu(G, k) = k - lp^*(G)\]
+i.e., this is our new parameterization for Vertex Cover above LP. Then, our goal is that, 
+by showing this factor decreases at least $\frac{1}{2}$ per each step, so our algorithm terminated and 
+depth of tree is at most $2(k - lp^*(G))$. 
+
+\begin{prop}
+For every iteration, the measure $\mu$ decreases at least $\frac{1}{2}$. 
+\end{prop}
+
+\begin{proof}
+    
+Here we claim that, for every $v \in V(G)$, 
+\[lp^*(G - v) \geq lp^*(G) - \frac{1}{2}\]
+Suppose not. Then, $lp^*(G - v) < lp^*(G) - \frac{1}{2}$. Since each $lp^*$ value is quantumized by $1/2$, it implies that 
+\[lp^*(G-v) \leq lp^*(G) - 1\]
+Then, let's choose the half-integral optimal LPVC solution $x^*$ of $G - v$. 
+Then, append $x^*$ for $v$ with $x^*_v = 1$. Then such new $x^*$ holds size $lp^*(G)$ optimal solution of LPVC of $G$, however, 
+all-$1/2$ is unique solution. It is contradiction, so claim holds. 
+With that, for every iteration, W.L.O.G. for vertex $v$,
+\[\mu(G-v, k-1) = k - 1 - lp^*(G-v) \leq k - lp^*(G) - \frac{1}{2} = \mu(G, k) - \frac{1}{2}\]
+However, our algorithm guarantees that if $k < lp^*(G)$ or $k \geq 2 \cdot lp^*(G)$ then terminate. 
+So, if $k - lp^*(G) < 0$, then terminate. So we can decrease our measure at most $2\mu(G, k)$ times. 
+So the running time is $\CO(4^{k - lp^*(G)})$. And also, we guaranteed that $k - lp^*(G) \leq k/2$. So, it works as well as $\CO(2^k)$ time. 
+
+\end{proof}
+
 \end{document}
