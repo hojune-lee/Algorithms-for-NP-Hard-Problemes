@@ -491,5 +491,56 @@ With second lemma, one can show that Algorithm 2 is correct. And since it genera
 In this section, we review the \textsc{Vertex Cover} with another parameterization, which is 
 \[\kappa : (G, k) \mapsto k - lp^*(G)\]
 Here, $lp^*(G)$ is a solution of another problem, which called linear program version of vertex cover. 
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Linear Program for Vertex Cover]
+
+For $G = (V, E)$, linear program for vertex cover is called \textsc{LPVC}, which defined as following. 
+\[\min \sum_{u \in V(G)} x_u\]
+where 
+\[\forall uv \in E, x_u + x_v \geq 1, \qquad  \forall u \in V, x_u \geq 0 \tag{$\star$}\]
+holds. Let's call above condition by $\star$. And we denote $lp^*(G)$ be the optimal solution of \textsc{LPVC}. 
+
+\end{tcolorbox}
+
+One fact is that, 
+\[\text{size of optimal vertex cover of $G$} \geq lp^*(G)\]
+This is because that, optimal vertex cover is very special case of \textsc{LPVC}. It can be easily obtain, since 
+every vertex cover satisfy the condition $\star$. So, this automatically implies that 
+for given $(G, k)$, if $k < lp^*(G)$, $(G, k)$ is No instance of \textsc{Vertex Cover}. 
+
+Now, we'll explore the algorithm which related to these LP problems. Before move on, we'll take a following theorem without proof. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Linear Program is P]
+
+Linear Program can be solved in polynomial time. So that, \textsc{LPVC} also solved in polynomial time.
+
+\end{tcolorbox}
+
+And now we'll define half-integral solution for \textsc{LPVC}. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Half Integral solution for LPVC]
+
+We call that the solution $x^*$ for \textsc{LPVC} is \textit{half-integral} when 
+\[\forall u \in V(G), x^*_u \in \{0, \frac{1}{2}, 1\}\]
+
+\end{tcolorbox}
+
+With the above fact, we can conduct following decomposition in polynomial time. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=green!75!black,title=Crown Decomposition]
+
+Let $x^*$ be the solution of \textsc{LPVC}. Then we can partition $V(G)$ into following 3 sets : 
+\[C = \{u \in V(G) | x^*_u < 0.5\}\]
+\[H = \{u \in V(G) | x^*_u > 0.5\}\]
+\[R = \{u \in V(G) | x^*_u = 0.5\}\]
+This is called \textit{crown decomposition} of $G$. This decomposition can be obtained in polynomial time. 
+\end{tcolorbox}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{crown-decomposition.png}
+    \caption{A graph illustrating the crown decomposition.}
+    \label{fig:crown-decomposition}
+\end{figure}
+
+
 
 \end{document}
