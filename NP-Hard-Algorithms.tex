@@ -541,6 +541,73 @@ This is called \textit{crown decomposition} of $G$. This decomposition can be ob
     \label{fig:crown-decomposition}
 \end{figure}
 
+Now, we are going to argue many properties on crown decomposition. 
 
+\begin{lem}
+
+For every $H' \subseteq H$, $|N_G(H') \cap C| \geq |H'|$
+
+\end{lem}
+
+\begin{proof}
+    
+Actually, this is quite intuitive. If not, that situation is very un-natural to reduce the total-sum. 
+
+Suppose not, i.e., there exists $H' \subseteq H$ such that $|N_G(H') \cap C| < |H'|$. 
+Now idea is very simple, let's construct more cheap solution from here! 
+We can define following value $\epsilon > 0$ 
+\[\epsilon = \min_{h \in H'} \{x^*_h - 0.5\} > 0\]
+And then, we'll construct more cheap solution by 
+\[\forall u \in V(G), x'_u = \begin{cases}
+    x^*_u + \epsilon & u \in N_G(H') \cap C \\
+    x^*_u - \epsilon & u \in H' \\
+    x^*_u & \text{otherwise}
+\end{cases}\]
+
+$x'$ is feasible LP solution since all our reponse to check is for incident parts of $H'$, but it preserves 
+$H'$ to $C$ sum, and since $x'$ have same crown decomposition, $H'$ to $H$ and $H'$ to $R$ also resolved. However, as 
+$|N_G(H') \cap C| < |H'|$, the total cost $|x'|$ is strictly small than $|x^*|$. 
+\[\sum_{u \in V(G)} x'_u = \left(\sum_{u \in V(G)} x^*_u \right) - \epsilon(|H'| - |N_G(H') \cap C|) < \sum_{u \in V(G)} x^*_u\]
+This contradicts to $x^*$ is an optimal solution. 
+
+\end{proof}
+
+\begin{lem}
+    
+Let $(R, H, C)$ be a crown decomposition of $G$ w.r.t. optimal solution $x^*$ of \textsc{LPVC}. 
+Then, following solution is also a optimal solution of \textsc{LPVC}. 
+
+\[x'_u = \begin{cases}
+    0.5 & u \in R \\
+    1 & u \in H \\
+    0 & u \in C
+\end{cases}\]
+
+\end{lem}
+
+\begin{proof}
+    
+Let $\CX$ be the set of all optimal solution of \textsc{LPVC} such that yields crown decomposition $(R, H, C)$. 
+And for each $x^* \in \CX$, we can define following two sets: 
+\[C_{x^*} = \{c | c \in C , x^*_c > 0\}\]
+\[H_{x^*} = \{h | h \in H, x^*_h < 1\}\]
+Then we can change our claim into that there exists $x' \in \CX$ such that $C_{x'} \cap H_{x'} = \emptyset$. 
+Suppose not, and let $x'$ be the solution that minimize $|C_{x'} \cap H_{x'}| > 0$. In this case, we can choose following $\delta > 0$. 
+\[\delta = \min \left( \min_{c \in C_{x'}} \{x'_c\}, \min_{h \in H_{x'}} \{1 - x'_h\} \right)\]
+Then here, we can construct following revised solution $x''$ by 
+\[x''_u = \begin{cases}
+    x'_u - \delta & u \in H_{x'} \\
+    x'_u + \delta & u \in C_{x'} \\
+    x'_u & \text{otherwise}
+\end{cases}\]
+It is obvious that $x''$ is feasible solution of \textsc{LPVC}. Actually, $x''$ is an optimal solution. 
+First, for all vertices in $H_{x'}$ can't be incident with $C \setminus C_{x'}$. (Because, vertices in $C_{x'}$ assigned $0$)
+It implies that, $N_G(H_{x'}) \cap C \subseteq C_{x'}$. However, we know that $|H_{x'}| \leq |N_G(H_{x'}) \cap C|$ by above lemma. 
+So finally, we these two relation, 
+\[|H_{x'}| \leq |C_{x'}| \implies |x''| \leq |x'|\]
+Since $x'$ is optimal, $|x''| = |x'|$ and so $x''$ also optimal solution. However, at least one vertex in $H_{x'}$ or $C_{x'}$ are collapsed into $1$, $0$ respectively, 
+so $|C_{x''} \cap H_{x''}| < |C_{x'} \cap H_{x'}$ which contradicts to choice of $x'$. So that, there exists $x' \in \CX$ such that 
+$C_{x'} \cap H_{x'} = \emptyset$, holds our claim. 
+\end{proof}
 
 \end{document}
