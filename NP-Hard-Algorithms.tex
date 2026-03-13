@@ -1,0 +1,495 @@
+
+\documentclass[12pt, a4paper, openany, twoside]{book}
+\usepackage[left=1in,right=1in,bottom=0.5in,top=0.8in]{geometry}
+\usepackage{amsfonts}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{epstopdf}
+\usepackage[pdfpagelabels,hyperindex]{hyperref}
+\usepackage{xcolor}
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{tikz-cd}
+\usepackage{comment}
+\usepackage{mathpartir}
+
+\linespread{1.3} 
+
+\hypersetup{
+pdftitle={.},
+pdfauthor={Hojune Lee},
+}
+
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{quest}[thm]{Question}
+\newtheorem{ppty}[thm]{Property}
+\newtheorem{ppties}[thm]{Properties}
+\newtheorem{axiom}[thm]{Axiom}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem{prob}[thm]{Problem}
+
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{defns}[thm]{Definitions}
+\newtheorem{con}[thm]{Construction}
+\newtheorem{exmp}[thm]{Example}
+\newtheorem{exmps}[thm]{Examples}
+\newtheorem{notn}[thm]{Notation}
+\newtheorem{notns}[thm]{Notations}
+\newtheorem{addm}[thm]{Addendum}
+\newtheorem{exer}[thm]{Exercise}
+\newtheorem{limit}[thm]{Limitation}
+
+
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{rems}[thm]{Remarks}
+\newtheorem{warn}[thm]{Warning}
+\newtheorem{sch}[thm]{Scholium}
+\newenvironment{thmbox}[1][]{\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title={#1}]}{\end{tcolorbox}}
+
+
+% newcommand bb
+    \newcommand{\BA}{{\mathbb {A}}} \newcommand{\BB}{{\mathbb {B}}}
+    \newcommand{\BC}{{\mathbb {C}}} \newcommand{\BD}{{\mathbb {D}}}
+    \newcommand{\BE}{{\mathbb {E}}} \newcommand{\BF}{{\mathbb {F}}}
+    \newcommand{\BG}{{\mathbb {G}}} \newcommand{\BH}{{\mathbb {H}}}
+    \newcommand{\BI}{{\mathbb {I}}} \newcommand{\BJ}{{\mathbb {J}}}
+    \newcommand{\BK}{{\mathbb {U}}} \newcommand{\BL}{{\mathbb {L}}}
+    \newcommand{\BM}{{\mathbb {M}}} \newcommand{\BN}{{\mathbb {N}}}
+    \newcommand{\BO}{{\mathbb {O}}} \newcommand{\BP}{{\mathbb {P}}}
+    \newcommand{\BQ}{{\mathbb {Q}}} \newcommand{\BR}{{\mathbb {R}}}
+    \newcommand{\BS}{{\mathbb {S}}} \newcommand{\BT}{{\mathbb {T}}}
+    \newcommand{\BU}{{\mathbb {U}}} \newcommand{\BV}{{\mathbb {V}}}
+    \newcommand{\BW}{{\mathbb {W}}} \newcommand{\BX}{{\mathbb {X}}}
+    \newcommand{\BY}{{\mathbb {Y}}} \newcommand{\BZ}{{\mathbb {Z}}}
+
+% newcommand  scr
+    \newcommand{\sA}{{\mathscr {A}}} \newcommand{\sB}{{\mathscr {B}}}
+    \newcommand{\sC}{{\mathscr {C}}} \newcommand{\sD}{{\mathscr {D}}}
+    \newcommand{\sE}{{\mathscr {E}}} \newcommand{\sF}{{\mathscr {F}}}
+    \newcommand{\sG}{{\mathscr {G}}} \newcommand{\sH}{{\mathscr {H}}}
+    \newcommand{\sI}{{\mathscr {I}}} \newcommand{\sJ}{{\mathscr {J}}}
+    \newcommand{\sK}{{\mathscr {K}}} \newcommand{\sL}{{\mathscr {L}}}
+    \newcommand{\sN}{{\mathscr {N}}} \newcommand{\sM}{{\mathscr {M}}}
+    \newcommand{\sO}{{\mathscr {O}}} \newcommand{\sP}{{\mathscr {P}}}
+    \newcommand{\sQ}{{\mathscr {Q}}} \newcommand{\sR}{{\mathscr {R}}}
+    \newcommand{\sS}{{\mathscr {S}}} \newcommand{\sT}{{\mathscr {T}}}
+    \newcommand{\sU}{{\mathscr {U}}} \newcommand{\sV}{{\mathscr {V}}}
+    \newcommand{\sW}{{\mathscr {W}}} \newcommand{\sX}{{\mathscr {X}}}
+    \newcommand{\sY}{{\mathscr {Y}}} \newcommand{\sZ}{{\mathscr {Z}}}
+
+
+% newcommand cal
+    \newcommand{\CA}{{\mathcal {A}}} \newcommand{\CB}{{\mathcal {B}}}
+    \newcommand{\CC}{{\mathcal {C}}} \newcommand{\CD}{{\mathcal {D}}}
+    \newcommand{\CE}{{\mathcal {E}}} \newcommand{\CF}{{\mathcal {F}}}
+    \newcommand{\CG}{{\mathcal {G}}} \newcommand{\CH}{{\mathcal {H}}}
+    \newcommand{\CI}{{\mathcal {I}}} \newcommand{\CJ}{{\mathcal {J}}}
+    \newcommand{\CK}{{\mathcal {K}}} \newcommand{\CL}{{\mathcal {L}}}
+    \newcommand{\CM}{{\mathcal {M}}} \newcommand{\CN}{{\mathcal {N}}}
+    \newcommand{\CO}{{\mathcal {O}}} \newcommand{\CP}{{\mathcal {P}}}
+    \newcommand{\CQ}{{\mathcal {Q}}} \newcommand{\CR}{{\mathcal {R}}}
+    \newcommand{\CS}{{\mathcal {S}}} \newcommand{\CT}{{\mathcal {T}}}
+    \newcommand{\CU}{{\mathcal {U}}} \newcommand{\CV}{{\mathcal {V}}}
+    \newcommand{\CW}{{\mathcal {W}}} \newcommand{\CX}{{\mathcal {X}}}
+    \newcommand{\CY}{{\mathcal {Y}}} \newcommand{\CZ}{{\mathcal {Z}}}
+
+    % newcommand frak
+     \newcommand{\fa}{{\mathfrak{a}}}  \newcommand{\fb}{{\mathfrak{b}}}
+     \newcommand{\fc}{{\mathfrak{c}}}  \newcommand{\fd}{{\mathfrak{d}}}
+     \newcommand{\fe}{{\mathfrak{e}}}  \newcommand{\ff}{{\mathfrak{f}}}
+     \newcommand{\fg}{{\mathfrak{g}}}  \newcommand{\fh}{{\mathfrak{h}}}
+     \newcommand{\fii}{{\mathfrak{i}}}  \newcommand{\fj}{{\mathfrak{j}}}
+     \newcommand{\fk}{{\mathfrak{m}}}  \newcommand{\fl}{{\mathfrak{l}}}
+     \newcommand{\fm}{{\mathfrak{m}}}  \newcommand{\fn}{{\mathfrak{n}}}
+     \newcommand{\fo}{{\mathfrak{o}}}  \newcommand{\fp}{{\mathfrak{p}}}
+     \newcommand{\fq}{{\mathfrak{q}}}  \newcommand{\fr}{{\mathfrak{r}}}
+     \newcommand{\fs}{{\mathfrak{s}}}  \newcommand{\ft}{{\mathfrak{t}}}
+     \newcommand{\fu}{{\mathfrak{u}}}  \newcommand{\fv}{{\mathfrak{v}}}
+     \newcommand{\fw}{{\mathfrak{w}}}  \newcommand{\fx}{{\mathfrak{x}}}
+     \newcommand{\fy}{{\mathfrak{y}}}  \newcommand{\fz}{{\mathfrak{z}}}
+
+    \newcommand{\fA}{{\mathfrak{A}}}  \newcommand{\fB}{{\mathfrak{B}}}
+     \newcommand{\fC}{{\mathfrak{C}}}  \newcommand{\fD}{{\mathfrak{D}}}
+     \newcommand{\fE}{{\mathfrak{E}}}  \newcommand{\fF}{{\mathfrak{F}}}
+     \newcommand{\fG}{{\mathfrak{G}}}  \newcommand{\fH}{{\mathfrak{H}}}
+     \newcommand{\fI}{{\mathfrak{I}}}  \newcommand{\fJ}{{\mathfrak{J}}}
+     \newcommand{\fK}{{\mathfrak{K}}}  \newcommand{\fL}{{\mathfrak{L}}}
+     \newcommand{\fM}{{\mathfrak{M}}}  \newcommand{\fN}{{\mathfrak{N}}}
+     \newcommand{\fO}{{\mathfrak{O}}}  \newcommand{\fP}{{\mathfrak{P}}}
+     \newcommand{\fQ}{{\mathfrak{Q}}}  \newcommand{\fR}{{\mathfrak{R}}}
+     \newcommand{\fS}{{\mathfrak{S}}}  \newcommand{\fT}{{\mathfrak{T}}}
+     \newcommand{\fU}{{\mathfrak{U}}}  \newcommand{\fV}{{\mathfrak{V}}}
+     \newcommand{\fW}{{\mathfrak{W}}}  \newcommand{\fX}{{\mathfrak{X}}}
+     \newcommand{\fY}{{\mathfrak{Y}}}  \newcommand{\fZ}{{\mathfrak{Z}}}
+
+
+
+ % newcommand :rm
+     \newcommand{\RA}{{\mathrm {A}}} \newcommand{\RB}{{\mathrm {B}}}
+    \newcommand{\RC}{{\mathrm {C}}} \newcommand{\RD}{{\mathrm {D}}}
+    \newcommand{\RE}{{\mathrm {E}}} \newcommand{\RF}{{\mathrm {F}}}
+    \newcommand{\RG}{{\mathrm {G}}} \newcommand{\RH}{{\mathrm {H}}}
+    \newcommand{\RI}{{\mathrm {I}}} \newcommand{\RJ}{{\mathrm {J}}}
+    \newcommand{\RK}{{\mathrm {K}}} \newcommand{\RL}{{\mathrm {L}}}
+    \newcommand{\RM}{{\mathrm {M}}} \newcommand{\RN}{{\mathrm {N}}}
+    \newcommand{\RO}{{\mathrm {O}}} \newcommand{\RP}{{\mathrm {P}}}
+    \newcommand{\RQ}{{\mathrm {Q}}} \newcommand{\RR}{{\mathrm {R}}}
+    \newcommand{\RS}{{\mathrm {S}}} \newcommand{\RT}{{\mathrm {T}}}
+    \newcommand{\RU}{{\mathrm {U}}} \newcommand{\RV}{{\mathrm {V}}}
+    \newcommand{\RW}{{\mathrm {W}}} \newcommand{\RX}{{\mathrm {X}}}
+    \newcommand{\RY}{{\mathrm {Y}}} \newcommand{\RZ}{{\mathrm {Z}}}
+
+    \newcommand{\Ad}{{\mathrm{Ad}}} \newcommand{\Aut}{{\mathrm{Aut}}}
+    \newcommand{\Br}{{\mathrm{Br}}} \newcommand{\Ch}{{\mathrm{Ch}}}
+    \newcommand{\cod}{{\mathrm{cod}}} \newcommand{\cont}{{\mathrm{cont}}}
+    \newcommand{\cl}{{\mathrm{cl}}}   \newcommand{\Cl}{{\mathrm{Cl}}}
+    \newcommand{\disc}{{\mathrm{disc}}}\newcommand{\Eis}{{\mathrm{Eis}}}
+    \newcommand{\Div}{{\mathrm{Div}}} \renewcommand{\div}{{\mathrm{div}}}
+    \newcommand{\End}{{\mathrm{End}}} \newcommand{\Frob}{{\mathrm{Frob}}}
+    \newcommand{\Gal}{{\mathrm{Gal}}} \newcommand{\GL}{{\mathrm{GL}}}
+    \newcommand{\Hom}{{\mathrm{Hom}}} \renewcommand{\Im}{{\mathrm{Im}}}
+    \newcommand{\Ind}{{\mathrm{Ind}}} \newcommand{\ind}{{\mathrm{ind}}}
+    \newcommand{\inv}{{\mathrm{inv}}}
+    \newcommand{\Isom}{{\mathrm{Isom}}} \newcommand{\Jac}{{\mathrm{Jac}}}
+    \newcommand{\ad}{{\mathrm{ad}}}  \newcommand{\Tr}{{\mathrm{Tr}}}
+    \newcommand{\Ker}{{\mathrm{Ker}}} \newcommand{\Ros}{{\mathrm{Ros}}}
+    \newcommand{\Lie}{{\mathrm{Lie}}} \newcommand{\Hol}{{\mathrm{Hol}}}
+
+    \newcommand{\cyc}{{\mathrm{cyc}}}\newcommand{\id}{{\mathrm{id}}}
+    \newcommand{\new}{{\mathrm{new}}} \newcommand{\NS}{{\mathrm{NS}}}
+    \newcommand{\ord}{{\mathrm{ord}}} \newcommand{\rank}{{\mathrm{rank}}}
+    \newcommand{\PGL}{{\mathrm{PGL}}} \newcommand{\Pic}{\mathrm{Pic}}
+    \newcommand{\cond}{\mathrm{cond}} \newcommand{\Is}{{\mathrm{Is}}}
+    \renewcommand{\Re}{{\mathrm{Re}}} \newcommand{\reg}{{\mathrm{reg}}}
+    \newcommand{\Res}{{\mathrm{Res}}} \newcommand{\Sel}{{\mathrm{Sel}}}
+    \newcommand{\RTr}{{\mathrm{Tr}}} \newcommand{\alg}{{\mathrm{alg}}}
+    \newcommand{\PSL}{{\mathrm{PSL}}}
+
+\newcommand{\coker}{{\mathrm{coker}}}
+\newcommand{\val}{{\mathrm{val}}} \newcommand{\sign}{{\mathrm{sign}}}
+\newcommand{\mult}{{\mathrm{mult}}} \newcommand{\Vol}{{\mathrm{Vol}}}
+\newcommand{\Meas}{{\mathrm{Meas}}}\renewcommand{\mod}{\ \mathrm{mod}\ }
+\newcommand{\Ann}{\mathrm{Ann}}
+\newcommand{\Tor}{\mathrm{Tor}}
+\newcommand{\Supp}{\mathrm{Supp}}\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\Max}{\mathrm{Max}}
+\newcommand{\Coker}{\mathrm{Coker}}
+\newcommand{\Stab}{\mathrm{Stab}}
+\newcommand{\Irr}{\mathrm{Irr}}\newcommand{\Inf}{\mathrm{Inf}}\newcommand{\Sup}{\mathrm{Sup}}
+\newcommand{\rk}{\mathrm{rk}}\newcommand{\Fil}{\mathrm{Fil}}
+\newcommand{\Sim}{{\mathrm{Sim}}} \newcommand{\SL}{{\mathrm{SL}}}
+\newcommand{\Spec}{{\mathrm{Spec}}} \newcommand{\SO}{{\mathrm{SO}}}
+\newcommand{\SU}{{\mathrm{SU}}} \newcommand{\Sym}{{\mathrm{Sym}}}
+\newcommand{\sgn}{{\mathrm{sgn}}} \newcommand{\tr}{{\mathrm{tr}}}
+\newcommand{\tor}{{\mathrm{tor}}}  \newcommand{\ur}{{\mathrm{ur}}}
+\newcommand{\vol}{{\mathrm{vol}}}  \newcommand{\ab}{{\mathrm{ab}}}
+\newcommand{\Sh}{{\mathrm{Sh}}} \newcommand{\Ell}{{\mathrm{Ell}}}
+\newcommand{\Char}{{\mathrm{Char}}}\newcommand{\Tate}{{\mathrm{Tate}}}
+\newcommand{\corank}{{\mathrm{corank}}} \newcommand{\Cond}{{\mathrm{Cond}}}
+\newcommand{\Inn}{{\mathrm{Inn}}} \newcommand{\Spf}{{\mathrm{Spf}}}
+\newcommand{\Mat}{{\mathrm{Mat}}}
+
+
+    \font\cyr=wncyr10  \newcommand{\Sha}{\hbox{\cyr X}}
+    \newcommand{\wt}{\widetilde} \newcommand{\wh}{\widehat} \newcommand{\ck}{\check}
+    \newcommand{\pp}{\frac{\partial\bar\partial}{\pi i}}
+    \newcommand{\pair}[1]{\langle {#1} \rangle}
+    \newcommand{\wpair}[1]{\left\{{#1}\right\}}
+    \newcommand{\intn}[1]{\left( {#1} \right)}
+    \newcommand{\norm}[1]{\|{#1}\|}
+    \newcommand{\sfrac}[2]{\left( \frac {#1}{#2}\right)}
+    \newcommand{\ds}{\displaystyle}
+    \newcommand{\ov}{\overline}
+    \newcommand{\Gros}{Gr\"{o}ssencharaktere}
+    \newcommand{\incl}{\hookrightarrow}
+    \newcommand{\lra}{\longrightarrow}
+     \newcommand{\ra}{\rightarrow}
+    \newcommand{\imp}{\Longrightarrow}
+    \newcommand{\lto}{\longmapsto}
+    \newcommand{\bs}{\backslash}
+    \newcommand{\nequiv}{\equiv\hspace{-7.8pt}/}
+    \theoremstyle{plain}
+
+
+\definecolor{energy}{RGB}{114,0,172}
+\definecolor{freq}{RGB}{45,177,93}
+\definecolor{spin}{RGB}{251,0,29}
+\definecolor{signal}{RGB}{203,23,206}
+\definecolor{circle}{RGB}{217,86,16}
+\definecolor{average}{RGB}{203,23,206}
+\newcommand{\K}{\operatornamewithlimits{K}}
+\colorlet{shadecolor}{gray!20}
+\pgfplotsset{compat=1.9}
+\def\N{10}
+\def\M{4}
+\usepgflibrary{fpu}
+
+\algnewcommand\algorithmicinput{\textbf{Input:}}
+\algnewcommand\algorithmicoutput{\textbf{Output:}}
+
+\algnewcommand\Input{\item[\algorithmicinput]}
+\algnewcommand\Output{\item[\algorithmicoutput]}
+
+\def\upint{\mathchoice%
+    {\mkern13mu\overline{\vphantom{\intop}\mkern7mu}\mkern-20mu}%
+    {\mkern7mu\overline{\vphantom{\intop}\mkern7mu}\mkern-14mu}%
+    {\mkern7mu\overline{\vphantom{\intop}\mkern7mu}\mkern-14mu}%
+    {\mkern7mu\overline{\vphantom{\intop}\mkern7mu}\mkern-14mu}%
+  \int}
+\def\lowint{\mkern3mu\underline{\vphantom{\intop}\mkern7mu}\mkern-10mu\int}
+
+
+
+\makeatletter
+\let\c@equation\c@thm
+\raggedbottom
+\makeatother
+\numberwithin{equation}{section}
+%--------Meta Data: Fill in your info------
+\author{Hojune Lee, 20210541}
+
+\title{Abstract Algebra}
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{9cm}
+            
+        \Huge
+        \textbf{Algorithms for NP-Hard Problems}
+    
+        \vspace{1cm}
+        \large
+        Summary note, Lectured by Eunjung Kim, KAIST
+        \vspace{3cm}
+        
+        \LARGE
+        \textbf{Hojune Lee}
+            
+        \vspace{8cm}
+            
+        \normalsize
+        \textbf{School of Computing, KAIST}\\  
+    \end{center}
+\end{titlepage}
+
+\hypersetup{linkcolor=black}
+\tableofcontents
+\hypersetup{linkcolor=blue}
+
+\newpage 
+
+\chapter{Parameterized Algorithm}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Parameterization]
+
+The \textit{parameterization} is a map defined by 
+\[\kappa : \Sigma^* \rightarrow \BN_0\]
+With this definition, \textit{parameterized problem} is an ordered pair decision problem for language $\fL \subseteq \Sigma^*$ and parameterization $\kappa$, 
+$(\fL, \kappa)$. Since $\kappa$ is a map, we can take any well-defined function for $\kappa$. So, we can claim that for wrong encoded 
+instance in $\Sigma^*$, they goes to some fixed value, e.g. $0$. 
+
+Here, it is important that why we take this definition. I'll write the intuition later, after introducing the example. 
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=\textsc{Vertex Cover}]
+
+All problems are defined in red-colored box. First problem is \textsc{Vertex Cover}. For a graph $G = (V, E)$ and $k \in \BN_0$, 
+\textit{vertex cover} is a set $S \subseteq V$ such that $\forall uv \in E, u \in S \vee v \in S$. i.e. All edges in $E$ are covered by $S$. 
+
+Here, \textsc{Vertex Cover} is a decision problem of following encoded language $\fL$ : 
+\[\fL_{VC} = \{(G, k) | G = (V, E), k \in \BN_0, G \text{ has vertex cover whose size at most } k\}\]
+
+\end{tcolorbox}
+
+Since $(G, k) \in \Sigma^*$ is a encoded string, they are together. Means that, when we describe the input size $|x|$ of algorithm, 
+it doesn't contain the seperated meaning of size of $G$ and magnitude of $k$. So we parameterization $\kappa$ here, to extract the meaning of $k$. 
+\[\kappa : (G, k) \mapsto k\] 
+As we'll see later, another information also can be extracted : 
+\[\kappa : (G, k) \mapsto k - lp^*(G)\]
+This is conceptual meaning of parameterization of a problem. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Fixed Parameter Tractable]
+
+A parameterized problem $(\fL, \kappa)$ is \textit{fixed parameter tractable} if there is an algorithm such that 
+for every $x \in \Sigma^*$, decides whether $x \in \fL$ or not in time $f(\kappa(|x|))\cdot |x|^{\CO(1)}$
+
+\end{tcolorbox}
+
+\newpage 
+
+\chapter{Branching Algorithms}
+
+\section{$\CO(2^k)$-time Algorithm for Vertex Cover}
+
+\begin{algorithm}
+
+\caption{$\CO(2^k)$-time Algorithm for Vertex Cover}
+
+\begin{algorithmic}[1]
+\Procedure{\textbf{VC}}{$G,k$}
+\Input{$G = (V, E)$ is a graph, $k \in \BN_0$}
+\Output{Decide $(G, k) \in \fL_{VC}$ or not }
+\If{$|E| = 0$}
+    \Return Yes
+\ElsIf{$k = 0$}
+    \Return No 
+\Else   
+\State $uv \gets Pick(E)$ \Comment{Pick any edge}
+\State \Return \textbf{VC}$(G - u, k - 1)$ $\vee$ \textbf{VC}$(G - v, k - 1)$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+
+\end{algorithm}
+
+This is very fundamental algorithm for \textsc{Vertex Cover}. We can prove following: 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=green!75!black,title=Algorithm 1]
+
+Algorithm 1 is \textit{correct}(i.e., decides whether $(G, k) \in \fL_{VC}$ or not correctly) in time $\CO(2^k \cdot poly(n))$
+
+\end{tcolorbox}
+
+\begin{proof}
+    
+We can say that algorithm 1 is correct means that 
+\[\mathbf{VC}(G, k) = \text{Yes} \iff (G, k) \in \fL_{VC}\]
+We'll prove via mathematical induction on $k \in \BN_0$. If $k = 0$, it is trivial.
+Then assume that for any $G = (V, E)$, $VC(G, i) = \text{Yes} \iff (G, i) \in \fL_{VC}, 0 \leq i < k$. 
+And one easy fact is that, if $S$ is a vertex cover of $G$, and $u \in S$, then $S \setminus \{u\}$ is a vertex cover of $G - u$. 
+($\Leftarrow$) Let $(G, k) \in fL_{VC}$. Then, exists a vertex cover $S$ of $G$ such that $|S| \leq k$. 
+Suppose that given instance is non-trivial, so reach at line 4. Then pick $\forall uv \in E$, and W.L.O.G., $u \in S$. Then by fact, 
+$S \setminus \{u\}$ is a vertex cover of $G - u$ whose size is at most $k - 1$. Then, we can determine that $\mathbf{VC}(G-u,k-1) = \text{Yes}$ by hypothesis. 
+\newline
+($\Rightarrow$) Suppose that $\textbf{VC}(G, k) = \text{Yes}$. Then for non-trivial cases, W.L.O.G.,
+$\textbf{VC}(G-u, k-1)$ is Yes. It implies that $(G-u, k-1) \in \fL_{VC}$. Then, let $S'$ be the vertex cover of $G-u$ whose size is at most $k-1$. 
+Then, let $S = S' \cup \{u\}$. It is clearly a vertex cover of $G$ whose size is at most $k$. So $(G, k) \in \fL_{VC}$. 
+
+Now, for the running time. It is obvious that line 2,3,5 effects polynomial time w.r.t. input size. And there are at most $k$-depth of binary recursion, so 
+running time is $\CO(2^k \cdot poly(n))$. 
+
+\end{proof}
+
+\section{$\CO((3k)^k)$-time Algorithm for Feedback Vertex Set}
+
+Now we define next problem to solve, which is called \textsc{Feedback Vertex Set}. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=\textsc{Feedback Vertex Set}]
+
+For any graph $G = (V, E)$, a \textit{feed-back vertex set} of $G$ is a set $S \subseteq V$ such that 
+\[\forall C \in Cycle(G), S \cap C \neq \emptyset\]
+i.e., set of vertices that intersect with all of cycles in $G$. So, we can define decision problem \textsc{Feedback Vertex Set} by 
+\[\fL_{FVS} = \{(G, k) | G = (V, E), k \in \BN_0, G \text{ has FVS whose size at most $k$}\}\]
+
+\end{tcolorbox}
+
+\begin{algorithm}
+    
+\caption{$\CO((3k)^k)$-time Algorithm for Feedback Vertex Set}
+
+\begin{algorithmic}[1]
+\Procedure{\textbf{FVS}}{$G,k$}
+\If{$|E| = 0$}
+    \Return Yes
+\EndIf
+\If{$k = 0$}
+    \Return No
+\EndIf
+\While{$\exists v \in V(G), d_G(v) \leq 2$}
+\If{$d_G(v) \leq 1$}
+    \State $G \gets G - v$
+\ElsIf{$|N_G(v)\setminus \{v\}| = 2$}
+    \State $\{x, y\} \gets N_G(v) \setminus \{v\}$
+    \State $G \gets G - v + xy$ \Comment{Allow multigraphs}
+\Else    
+    \State $G \gets G \setminus N_G(v)$
+    \State $k \gets k - 1$ \Comment{Assume that we choose the adjacent vertex of $v$}
+\EndIf 
+\EndWhile
+\State $\{v_n, \cdots, v_1\} \gets Sort(V(G))$ \Comment{Note: Decreasing Order}
+\State \Return $\bigvee_{i=1}^{3k} \mathbf{FVS}(G - v_i, k-1)$
+\EndProcedure
+\end{algorithmic}
+
+\end{algorithm}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=green!75!black,title=Algorithm 2]
+
+Algorithm 2 is correct for \textsc{Feedback Vertex Set} in time $\CO((3k)^k \cdot poly(n))$
+
+\end{tcolorbox}
+
+\begin{lem}
+    
+For any feed-back vertex set $X$ of $G = (V, E)$ holds that 
+\[\sum_{x \in X} (d_G(x) - 1) \geq |E| - |V| + 1\]
+
+\end{lem}
+
+\begin{proof}
+    
+One easily obtained fact is that, $G[V \setminus X]$ is a forest. Means that, 
+\[|E(G[V\setminus X])| \leq |V(G[V\setminus X])| - 1 = |V| - |X| - 1\]
+However, 
+\[|E| = \underbrace{|E(G[X])| + |E(X, V \setminus X)|}_{\leq \sum_{x \in X} d_G(x)} + |E(G[V \setminus X])|\]
+So, 
+\[\sum_{x \in X}d_G(x) \geq |E| - |E(G[V \setminus X])| \geq |E| - |V| + |X| + 1\]
+Implies that 
+\[\sum_{x \in X} (d_G(x) - 1) \geq |E| - |V| + 1\]
+
+\end{proof}
+
+\begin{lem}
+    
+Let $G = (V, E)$ such that $\delta(G) \geq 3$. Let $V = \{v_1, v_2, \cdots, v_n\}$ where 
+\[d_G(v_1) \geq d_G(v_2) \geq \cdots \geq d_G(v_n)\]
+Then, for any feedback vertex set $X$ of $G$, 
+\[|X| \leq k \implies X \cap \{v_1, \cdots, v_{3k}\} \neq \emptyset\]
+
+\end{lem}
+
+\begin{proof}
+    
+Suppose not. By hand-shake lemma, 
+\[\sum_{v \in V} d_G(v) = 2|E| \geq 3|V| \qquad \text{$\because \delta(G) \geq 3$}\]
+And since $X \cap \{v_1, \cdots, v_{3k}\} = \emptyset$, 
+We can obtain following from above lemma:
+\[\sum_{i = 1}^{3k} (d_G(v_i)-1) \geq 3 \sum_{x \in X} (d_G(x)-1) \geq 3|E| - 3|V| + 3 \] 
+\[\sum_{i = 3k+1}^{n} (d_G(v_i) - 1) \geq \sum_{x \in X} (d_G(x) - 1) \geq |E| - |V| + 1\]
+implies that, 
+\[\sum_{v \in V(G)} (d_G(v) - 1) = 2|E| - |V| \geq 4|E| - 4|V| + 4\]
+It deduce 
+\[3|V| > 2|E|\]
+which contradict to first line.
+\end{proof}
+
+With second lemma, one can show that Algorithm 2 is correct. And since it generates at most $3k$ branches for each step, and the maximal depth is $k$, so the running time will be $\CO((3k)^k \cdot poly(n))$
+
+\section{$\CO(4^{k-lp^*(G)})$-time Algorithm for Vertex Cover}
+
+In this section, we review the \textsc{Vertex Cover} with another parameterization, which is 
+\[\kappa : (G, k) \mapsto k - lp^*(G)\]
+Here, $lp^*(G)$ is a solution of another problem, which called linear program version of vertex cover. 
+
+\end{document}
