@@ -753,4 +753,325 @@ So the running time is $\CO(4^{k - lp^*(G)})$. And also, we guaranteed that $k -
 
 \end{proof}
 
+\newpage
+
+\chapter{Kernelization}
+
+\section{$\CO(k^2)$-Vertex Kernel}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Kernelization]
+
+A \textit{kernelization} of problem $P$ is a polynomial time algorithm (w.r.t. $|x|$ and $k$ both) 
+such that transform any instance $(x, k)$ of $P$ into another instance $(x', k')$ of $P$ satisfying 
+\begin{itemize}
+    \item equivalence: $(x, k) \in P$ if and only if $(x', k') \in P$
+    \item size bound: $|x'| \leq g(k)$ and $k' \leq g(k)$ for some computable function $g$. 
+\end{itemize}
+The final instance $(x', k')$ is called \textit{kernel}, and $g(k)$ be the size of a kernel. 
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Reduction Rules]
+
+Kernelization consists in applying some package of rules. A \textit{reduction rules} for $P$ is a 
+polynomial time algorithm (w.r.t. $|x|$ and $k$ both) such that transfrom any instance $(x, k)$ of $P$ into another instance $(x', k')$ of $P$ satisfying 
+equivalence. (Equivalence is also called by \textit{safeness, soundness}) We say that a instance $(x, k)$ is \textit{irreducible} if 
+reduction rule $R$ does not change them. 
+
+\end{tcolorbox}
+
+Intuitively, if we can reduce the instance size as much as we want (bounded by $g(k)$) in polynomial time, 
+then we can imagine that solving time of the reduced problem only depends on $g(k)$, the new input size. Following lemma is based on this intuition. 
+
+\begin{lem}
+    
+Let $P$ be the parameterized decidable problem. $P$ is fixed parameter tractable (FPT) if and only if it admits a kernelization. 
+
+\end{lem}
+
+\begin{proof}
+    
+($\Leftarrow$) Suppose that we can find kernelization: 
+\[(x, k) \mapsto (x', k') \quad |x'|, k' \leq g(k)\]
+Then since $|x'| \leq g(k)$, we can solve this problem by brute-force in $h(g(k))$ time. So this is FPT. 
+
+($\Rightarrow$) Suppose that $P$ is FPT. i.e., we can decide $P$ in time $f(k) \cdot |x|^c$ time. Then, running this algorithm for time $|x|^{c+1}$. 
+If it terminates, then return any small-sized constant instance. Otherwise, it means that $|x| < f(k)$. It directly means that given original instance is a kernel already. 
+
+\end{proof}
+
+Now, let's see the first example. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Buzz' Kernelization: $\CO(k^2)$-Vertex Kernel]
+
+This is kernelization algorithm for \textsc{Vertex Cover}. It input $(G, k)$ and output $(G', k')$ such that 
+$|V(G')| \leq \CO(k^2)$ and $k' \leq k$ with safeness. (So it is valid kernelization). 
+
+\begin{itemize}
+    \item Reduction Rule 1: $\exists v \in V(G), d_G(v) = 0 \implies (G, k) \mapsto (G - v, k)$
+    \item Reduction Rule 2: $\exists v \in V(G), d_G(v) \geq k + 1 \implies (G, k) \mapsto (G-v, k-1)$
+\end{itemize}
+
+\end{tcolorbox}
+
+It is easy to see that Rule 1 and 2 are safe. (i.e., after any reduction, $(G, k)$ is yes instance if and only if $(G', k')$ is yes instance.) 
+
+Now, let's analyze the size of kernel. Let $(G', k')$ be the kernel(maybe) of above reduction rules. 
+Then, $k' \leq k$ is clear. The measurement of size of kernel is quite tricky. We claim that if $(G, k)$ is irreducible w.r.t. above rules, then $|G|(= |V(G)) \leq \CO(k^2)$. 
+\begin{proof}
+
+Suppose that $(G, k)$ is yes instance. Then there exists a vertex cover $C$ of $G$. Here, 
+\[|C| \leq k ,\quad \forall v \in V(G), 1 \leq d_G(v) \leq k \implies |E(C)| \leq k^2\]
+However, $V(G) \setminus C$ is independent set in $G$. And there aren't any isolated vertices in $G$, 
+$|V(G) \setminus C| \leq |E(C)| \leq k^2$. So, 
+\[|G| = |V(G)| = |C| + |V(G) \setminus C| \leq k + k^2 \in \CO(k^2)\]
+
+Next one is tricky. If $|G| > \CO(k^2)$, it immediately implies that $(G, k)$ is no-instance. So, in this case, we can 
+output tiny no-instance example for kernel output. 
+
+\end{proof}
+
+\newpage 
+
+\section{LP-based kernelization for Vertex Cover}
+Actually, this is sort of toy example. Now we'll see amazing results further. 
+Before move on, let us enable to use some useful decomposition of graphs without proof. Actually, we already see this in previous chapter. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Nemhauser-Trotter Theorem,breakable]
+
+Given any graph $G$, we can find partition $V(G) = (R, H, C)$ holds followings in polynomial time. 
+\begin{itemize}
+    \item For any vertex cover $S_r$ of $G[R]$, $S_r \cup H$ is a vertex cover of $G$. 
+    \item There exists an optimal vertex cover containing $H$. 
+    \item Any vertex cover of $G[R]$ is of size at least $\frac{1}{2}|R|$. 
+\end{itemize}
+
+\end{tcolorbox}
+
+Then, let's define kernelization related to this theorem. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=$\CO(2k)$-kernelization of Vertex Cover]
+
+This is kernelization algorithm for \textsc{Vertex Cover}. It takes input $(G, k)$ and output $(G', k')$ such that 
+$|V(G)| \leq 2k$. 
+
+\begin{itemize}
+    \item Rule 1: $V(G) \mapsto (R, H, C)$, $H \cup C \neq \emptyset \implies (G, k) \mapsto (G[R], k - |H|)$
+\end{itemize}
+
+\end{tcolorbox}
+
+\begin{lem}
+    This holds safeness. 
+\end{lem}
+
+\begin{proof}
+    
+($\Leftarrow$) Let $S'$ be a vertex cover of $G[R]$ whose size is at most $k - |H|$. Then, by the condition 1 of NT theorem, 
+$S = S' \cup H$ be the vertex cover of $G$ whose size is at most $k$. 
+
+($\Rightarrow$) Let $S$ be a vertex cover of $G$ whose size is at most $k$. Then, there exists a vertex cover $S$ of $G$, such that $H \subseteq S$. 
+One can be easily derived from condition 1: $C$ is independent set of $G$ and $R$ does not incident with $C$. First one is easy, and for second one, suppose that $cr \in E(G)$ for $c \in C, r \in R$. Then, we can choose $R - r$ for the vertex cover of $G[R]$ obviously. However, 
+since $H \cup (R - r)$ does not cover $cr$, it is contradiction. So, $R$ does not incident with $C$. So that, $H$ cover all the incident edges of $C$. 
+Since $S$ is optimal, $S \setminus H$ is vertex cover of $G[R]$ whose size is at most $k - |H|$. 
+
+\end{proof}
+
+\begin{lem}
+    
+The kernel size($=|V(G)|$) of above kernelization is $2k$. 
+
+\end{lem}
+
+\begin{proof}
+    
+Let $(G, k)$ be irreducible instance of above algorithm. Then, it implies that for NT decomposition $(R, H, C)$ of $G$, 
+$H \cup C = \emptyset$. Then, it means that $G[R] = G$. So, by condition 3, any vertex cover of $G[R] = G$ is size at least $\frac{1}{2}|R| = \frac{1}{2}|V|$. 
+So, if $k < \frac{1}{2}|V|$, it automatically becomes no instance. So we can output tiny no-instance kernel for this case, $|V| > 2k$. Otherwise, 
+$|V| \leq 2k$. So kernel size of $(G, k)$ is less than $2k$. 
+
+\end{proof}
+
+\newpage 
+
+\section{$3k$-vertex kernel using Crown Decomposition}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Crown Decomposition]
+
+A \textit{crown decomposition} of a graph $G = (V, E)$ is a partition $(R, H, C)$ of $V$ s.t. 
+\begin{itemize}
+    \item $H \cup C \neq \emptyset$
+    \item $C$ is independent set of $G$
+    \item $N(C) \subseteq H$, i.e., $H$ seperates $C$ and $R$. 
+    \item $\forall H' \subseteq H$, $|N(H')\cap C| \geq |H'|$, i.e., Hall's condition holds between $H, C$
+\end{itemize}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Matching and Saturated]
+
+A \textit{matching} in a graph $G = (V, E)$ is a set of disjoint edges. We call that 
+$M$ is maximal matching when if we add any edge to $M$, it is not matching anymore. We call that $M$ is maximum matching when 
+$M$ is the largest matching. We say that $v \in V(G)$ is \textit{saturated} by matching $M$ if $v$ is incident with $M$. 
+
+\end{tcolorbox}
+
+We have two famous theorems in Graph Theory course, which are Hall's theorem and k\"onig's theorem. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Hall's Theorem]
+
+Let $G$ be a bipartite graph partited as $(X, Y)$. There exists a matching $M$ such that saturate all vertices in $X$ if and only of $\forall X' \subseteq X, |N(X')\cap Y| \geq |X'|$ holds. 
+
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=K\"onig's Theorem]
+
+Vertex covering and Matching is dual in bipartite graphs. i.e., 
+the size of optimal vertex cover and maximum matching is same on the bipartite graph. 
+
+\end{tcolorbox}
+
+From now on, we'll explore various properties on crown decomposition and use it to construct kernelization. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=green!75!black,title=Lemma]
+
+If $(R, H, C)$ is a crown decomposition of $G$, then there exists an optimal vertex cover of $G$ containing all vertices of $H$. 
+
+\end{tcolorbox}
+
+\begin{proof}
+    
+Suppose that $S$ be the any vertex cover of $G$, whose crown decomposition is $(R, H, C)$. Then, 
+w.r.t. such decomposition, we can also decompose our vertex cover $S$ into $(S_R, S_H, S_C)$. 
+Note that, $E(H \setminus S_H, C \setminus S_C) = \emptyset$. So, it means that, $N(H \setminus S_H) \cap C \subseteq S_C$. 
+Then, $|N(H \setminus S_H) \cap C| \leq |S_C| $. By Hall's condition, 
+\[|H \setminus S_H| \leq |N(H \setminus S_H) \cap C| \leq |S_C|\]
+And it is clear that $S' = S - S_C + (H \setminus S_H)$ is a vertex cover. Since 
+\[|S'| = |S| - |S_C| + |H \setminus S_H| \leq |S|\]
+holds, it implies that there exists an optimal vertex cover containing entire $H$. 
+
+\end{proof}
+
+Similar to previous chapter, this lemma gives us following reduction rule. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Reduction Rule 1]
+
+For input $(G, k)$, let the crown decomposition of $G$ be $(R, H, C)$. Then, output $(G - (H \cup C), k - |H|)$
+i.e., 
+\[(G, k) \mapsto (G - (H \cup C), k - |H|)\]
+
+\end{tcolorbox}
+Now, we can prove that this is safe easily. 
+
+\begin{proof}
+    
+If $(G, k)$ is yes instance, then by above lemma, there exists optimal vertex cover $S$ containing entire $H$. 
+Then, it is clear that $S_C = \emptyset$ and $S_R$ is optimal vertex cover of $G[R]$. So, $(G - (H \cup C), k - |H|) = (G[R], k - |H|)$ is also yes. 
+
+Conversely, obvious. 
+
+\end{proof}
+
+Actually, you might realized that this reduction rules is same to previous section's one. 
+What's the difference? Previous one is LP-based decomposition. As we've seen, it also generate crown decomposition. 
+However, what we defined for crown decomposition is more general concept. So, one can expect is that 
+crown decomposition algorithm is much faster than construct crown decomposition via solving half-integral LP. 
+So we need to construct algorithm for general crown decomposition. 
+
+To show how can we construct crown decomposition and kernelization by Reduction Rule 1 at once, 
+first we propose the complete kernelization algorithm. (See next page)
+
+\newpage 
+
+\begin{algorithm}
+    
+\caption{$4k + 1$ Kernelization for \textsc{Vertex Cover} using crown decomposition}
+\begin{algorithmic}[1]
+\Procedure{VC-Crown}{$G, k$}
+\State Remove all isolated vertices in $G$ 
+\If{$|V(G)| \leq 4k + 1$} \Return $(G, k)$ \Comment{Kernelization Success} 
+\Else
+\State $M \gets$ Find a maximal matching via greedy \Comment{Just pick until can't}
+\If{$|M| \geq k + 1$} \Return small No-instance $(G_0, k_0)$
+\State $C_0 \gets V(G) - V(M)$,  $ H_0 \gets N(C_0)$, $R_0 = V(G) - (C_0 \cup H_0)$
+\While{$\exists H' \subseteq H_i$ s.t. $|H'| > |N(H') \cap C_i|$} \Comment{(*)}
+\State $C_{i+1} \gets C_i - (N(H') \cap C_i)$
+\State $H_{i+1} \gets H_i - H'$
+\State $R_{i+1} \gets R_i \cup H' \cup (N(H') \cap C_i)$
+\State $i \gets i + 1$
+\EndWhile
+\State \Return \textsc{VC-Crown}($G-(H_i \cup C_i), k - |H_i|$)
+\EndIf
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+Here, suppose that (*) works well, i.e., it terminates in polynomial time and always return crown decomposition of $G$. 
+Then, the safeness of this kernelization is proved. Here, what we need to show to claim this is valid kernelization is that 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Crown Decomposition Algorithm]
+
+    \begin{itemize}
+        \item the result of while loop is crown decomposition,
+        \item checking of while condition (*) can be done in polynomial time.
+    \end{itemize}
+    
+\end{tcolorbox}
+
+\begin{proof}
+    
+Let's see the first one. Here, we claim loop invariants first; 
+\begin{enumerate}
+    \item $H_i \cup C_i \neq \emptyset$
+    \item $C_i$ is independent set of $G$
+    \item $N(C_i) \subseteq H_i$, i.e., $H_i$ seperates $C_i$ and $R_i$
+    \item $|H_i| < |C_i|$
+\end{enumerate}
+
+\begin{itemize}
+    \item (Initial Case)
+    \begin{enumerate}
+        \item $H_0 = N(C_0)$. So, if $H_0 \cup C_0 = \emptyset$, it implies that $C = \emptyset$. It means that 
+        $M$ is perfect matching of $G$. However, $|V(G)| > 4k + 2$, so if the perfect matching exists, $|M| > 2k + 1$, contradiction. So, $H_0 \cup C_0 \neq \emptyset$. 
+        \item Since $M$ is maximal matching, $C_0 = V(G) - V(M)$ must be independent. 
+        \item Since $H_0 = N(C_0)$, this is obvious. 
+        \item We know that $|V(G)| > 4k + 2$ and $|M| \leq k$, so $|V(M)| \leq 2k$, so $|C_0| > 2k + 2$. However, 
+        $H_0 = N(C_0) \subseteq V(M)$ since if not, contradiction to $M$ is maximal. So, $|H_0| \leq |V(M)| \leq 2k$. 
+        It implies that $|H_0| < |C_0|$ holds. 
+    \end{enumerate}
+    \item (Induction Step)
+    It is recommended : Draw how we derive next iteration. 
+    \begin{enumerate}
+        \item Since $|H_i| < |C_i|$, the entire $H_i$ never selected to $H'$. So, $H' \subsetneq H_i$, so $H_{i+1} \cup C_{i+1} \neq \emptyset$. 
+        \item $C_{i+1} \subset C_i$, so $C_{i+1}$ is obviously independent set. 
+        \item It is sufficient to show that $C_{i+1}$ and $H' \cup (N(H') \cap C_i)$ is independent. 
+        It is clear that $C_{i+1}$ and $N(H') \cap C_i$ is independent, since $C_i$ is independent. And, $N(H') \cap C_{i+1} = \emptyset$ since we removed all neighbors of $H'$ in $C_i$. 
+        \item $|H_i| < |C_i|$. For $|H_{i+1}|$, we removed $|H'|$ vertices. For $|C_{i+1}|$, we removed $|N(H') \cap C_i|$ vertices. Since $|H'| > |N(H') \cap C_i|$, automatically $|H_{i+1}| < |C_{i+1}|$ holds. 
+    \end{enumerate}
+\end{itemize}
+
+It implies that, if this while loop terminate, (1)-(3) holds and no such $H'$ exists, so it becomes crown decomposition of $G$. 
+
+Now, let's see the second one. Which states we can decide such $H'$ (if exists) in polynomial time. Here, 
+there is a polynomial time algorithm for \textsc{Minimum Vertex Cover} problem on bipartite graph. 
+Let's imagine bipartite graph $(H \cup C, E(H, C))$. And apply above algorithm here, 
+then we can find minimum vertex cover $X$. 
+
+If $H_i \subseteq X$, then implies $H_i = X$. Then there exists matching $M^*$ such that saturate all vertices in $H_i$. So, Hall's condition holds. 
+Then we can't find $H'$. 
+
+If $H_i \setminus X \neq \emptyset$, then let $H' = H_i \setminus X$. 
+Here, $N(H') \subseteq X \cap C_i$. If $|X \cap C_i| > |H'|$, then we can find minimum vertex cover by alternating 
+all vertices in $X \cap C_i$ into $H'$. So, $|H'| \leq |X \cap C_i|$. If same, we can imagine that $H_i = X$ case. If else, our choice is good. 
+
+All these processes can be done in polynomial time without brute forces. 
+
+\end{proof}
+
+
+\newpage 
+
+\section{$\CO(8k^2)$-Vertex Kernel for \textsc{Feedback Vertex Set}}
+
 \end{document}
