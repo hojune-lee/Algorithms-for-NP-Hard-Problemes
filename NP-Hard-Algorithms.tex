@@ -1074,4 +1074,131 @@ All these processes can be done in polynomial time without brute forces.
 
 \section{$\CO(8k^2)$-Vertex Kernel for \textsc{Feedback Vertex Set}}
 
+Note that, while this section our $G$ admits to be \textit{multigraphs}. During our algorithm, 
+parallel edges and even loops can be generated. To avoid and confusion, let's define how we measure the 
+degree of loops and length of cycles first. Each loop donate 2 degrees to its vertex. And if there are parallel edges, it considered as length 2 cycle. 
+
+In this setting, we can set following basic reduction rules for kernelization of \textsc{Feedback Vertex Set}. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Reduction Rules(1)]
+
+\begin{itemize}
+    \item If there exists $v$ s.t. has any loop, return $(G - v, k - 1)$. 
+    \item If there exists $v$ s.t. $d_G(v) = 1$, return $(G - v, k)$. 
+    \item If $u$, $v$ are connected by more than 3 parallel edges, then remaining only 2. 
+    \item If $d_G(v) = 2$ and not loop, let $xv, yv \in E(G)$. it can be same. Then, return $(G - v + xy, k)$. 
+    This can generate loop or parallel edge. 
+\end{itemize}
+
+\end{tcolorbox}
+
+It is easy to see that above bunch of rules are safe and can be done in polynomial time. Further, if we convert $(G, k)$ into kernel $(G', k')$ with 
+above kernelization, then $\delta(G) \geq 3$. 
+
+Then, let's move on to interesting kernelization rules. We guaranteed the minimum degree from above rules. 
+What if we can guarantee the upper bound of vertex degree? See following lemma. 
+
+\begin{lem}
+    
+Let $(G, k)$ be the irreducible instance of \textsc{Feedback Vertex Set} w.r.t. above rules(1). 
+If the maximum degree $\Delta(G) < d$, then $|V| < (d+1)k$ and $|E| < 2dk$ unless $(G, k)$ is No-instance. 
+i.e., if $(G, k)$ is Yes instance, above holds. 
+
+\end{lem}
+
+\begin{proof}
+    
+Suppose that $(G, k)$ is Yes instance. Then, there exists feedback vertex set $X \subseteq V(G)$ whose size is at most $k$. 
+And as we know, $G - X$ is forest. Since $(G, k)$ is irreducible under Reduction Rules(1), $\delta(G) \geq 3$. Hence, 
+\begin{align*}
+    3(|V| - |X|) & \leq \sum_{v \in V - X} d_G(v) \\
+    & = 2|E(G[V-X])| + |E(G[V, V-X])| \\
+    & \leq 2(|V-X| - 1) + \sum_{u \in X} d_G(u) \\
+    & < 2(|V-X| - 1) + d|X|
+\end{align*}
+
+This implies that 
+\[|V| < (d+1)|X| \leq (d+1)k\]
+And it deduce that $|V-X| < dk$, so 
+\[|E| \leq d|X| + (|V-X|-1) < dk + dk - 1 < 2dk\]
+
+\end{proof}
+
+So here, we can observe that if $|V| \geq (8k + 1)k$ but $\Delta(G) \leq 8k$, it automatically filtered by above lemma, so 
+it is no-instance. Then we can construct following situation. 
+\begin{itemize}
+    \item Apply reduction rule(1). 
+    \item If $|V(G)| < (8k+1)k$, return $(G, k)$.
+    \item Else, $|V(G)| \geq (8k+1)k$, so if $\Delta(G) < 8k$, it is no-instance. 
+    \item Then here, we can obtain $\Delta(G) \geq 8k$. 
+\end{itemize}
+
+For the further step, we define new structures. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Cycle and Flower]
+
+A \textit{x-cycle} is a cycle traversing $x$. In general, it can contain loop and length 2 cycles. However, as we remove 
+all the loops, we consider the length of any $x$-cycle is at least 2. 
+
+A \textit{x-flower} is collection of $x$-cycles such that all of them intersects exactly (only) $x$. We say the order of 
+a $x$-flower is $k$ is there are $k$ $x$-cycles. 
+
+\end{tcolorbox}
+
+Here, suppose that there is a $x$-flower whose size is larger than $k+1$. Then, if we does not choose $x$ for 
+feedback vertex set, we must choose at least $k+1$ vertices from each $x$-cycles. So that, we can update the reduction rules.
+ 
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Reduction Rule(2)]
+
+
+    \begin{itemize}
+        \item If there exists $v$ s.t. has any loop, return $(G - v, k - 1)$. 
+        \item If there exists $v$ s.t. $d_G(v) = 1$, return $(G - v, k)$. 
+        \item If $u$, $v$ are connected by more than 3 parallel edges, then remaining only 2. 
+        \item If $d_G(v) = 2$ and not loop, let $xv, yv \in E(G)$. it can be same. Then, return $(G - v + xy, k)$. 
+        This can generate loop or parallel edge. 
+        \item If there exists $x$-flower whose order $\geq k + 1$, return $(G-x, k-1)$
+    \end{itemize}
+
+
+\end{tcolorbox}
+
+Then, the remaining case is that when there is no $x$-flower of order at least $k + 1$. Define few concepts for this. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=A-path]
+
+For $A \subseteq V(G)$, we say that a path $P$ is an $A$-path if both endpoints of $P$ are in $A$ and 
+no internal vertex of $P$ is in $A$. 
+
+\end{tcolorbox}
+
+\begin{lem}
+    
+Let $G = (V, E)$ and fix one $x \in V$. 
+Then, we can partition $N'(V)$ into two groups: $A_1$ is all neighbors of $x$ does not contain parallel edges, and $A_2$ is anothers. 
+\begin{itemize}
+    \item The maximum order of $x$-flower equals to summation of $|A_2|$ and maximum number of vertex disjoint $A_1$-paths in $G - x - A_2$. 
+    \item $S_x \subseteq V - x$ is a hitting set of all $x$-cycles if and only if $S_x$ contains $A_2$ and $S_x - A_2$ hits all $A_1$-paths of $G - x - A_2$. 
+\end{itemize}
+
+\end{lem}
+
+\begin{proof}
+    Easy
+\end{proof}
+
+Then here, we reach : $d_G(x) \geq 8k$ and maximum $x$-flower is order at most $k$. (If not, see last rule of above blue box)
+So here, one can set 
+\[l = k - |A_2| \geq 0, \quad A = A_1, \quad H = G - A_2 - x\]
+Then, we'll use next theorem. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Gallai's Theorem]
+
+Let $G = (V, E)$ and $A \subseteq V$. The maximum number of pairwise vertex-disjoint $A$-paths equals the minimum of 
+\[|X| + \sum_{C \in \CC(G-X)} \lfloor \frac{|A\cap C|}{2} \rfloor\]
+where the minimum is taken over all vertex seubsets $X \subseteq V$ and $\CC(G-X)$ is collection of all connected components of $G - X$. Moreover, both a maximum collection of pairwise vertex-disjoint $A$-paths 
+and a vertex set $X$ minimizing the right-hand side of the equality can be computed in polynomial time. 
+
+\end{tcolorbox}
+
 \end{document}
