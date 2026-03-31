@@ -1072,133 +1072,212 @@ All these processes can be done in polynomial time without brute forces.
 
 \newpage 
 
-\section{$\CO(8k^2)$-Vertex Kernel for \textsc{Feedback Vertex Set}}
+\section{$\CO(k^2)$-Vertex Kernel for \textsc{Feedback Vertex Set}}
 
-Note that, while this section our $G$ admits to be \textit{multigraphs}. During our algorithm, 
-parallel edges and even loops can be generated. To avoid and confusion, let's define how we measure the 
-degree of loops and length of cycles first. Each loop donate 2 degrees to its vertex. And if there are parallel edges, it considered as length 2 cycle. 
+This section require quite long proofs and theorems. So, I'll write the full algorithm first. 
+Note that, in this problem we assume that $G$ \textbf{allows multigraphs even loops.}
 
-In this setting, we can set following basic reduction rules for kernelization of \textsc{Feedback Vertex Set}. 
-
-\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Reduction Rules(1)]
-
-\begin{itemize}
-    \item If there exists $v$ s.t. has any loop, return $(G - v, k - 1)$. 
-    \item If there exists $v$ s.t. $d_G(v) = 1$, return $(G - v, k)$. 
-    \item If $u$, $v$ are connected by more than 3 parallel edges, then remaining only 2. 
-    \item If $d_G(v) = 2$ and not loop, let $xv, yv \in E(G)$. it can be same. Then, return $(G - v + xy, k)$. 
-    This can generate loop or parallel edge. 
-\end{itemize}
-
-\end{tcolorbox}
-
-It is easy to see that above bunch of rules are safe and can be done in polynomial time. Further, if we convert $(G, k)$ into kernel $(G', k')$ with 
-above kernelization, then $\delta(G) \geq 3$. 
-
-Then, let's move on to interesting kernelization rules. We guaranteed the minimum degree from above rules. 
-What if we can guarantee the upper bound of vertex degree? See following lemma. 
-
-\begin{lem}
+\begin{algorithm}
     
-Let $(G, k)$ be the irreducible instance of \textsc{Feedback Vertex Set} w.r.t. above rules(1). 
-If the maximum degree $\Delta(G) < d$, then $|V| < (d+1)k$ and $|E| < 2dk$ unless $(G, k)$ is No-instance. 
-i.e., if $(G, k)$ is Yes instance, above holds. 
+\caption{$\CO(k^2)$-kernelization for Feedback Vertex Set}
 
-\end{lem}
+\begin{algorithmic}[1]
+\Procedure{FVS-Kernel}{$G, k$}
+\If{$k < 0$} \Return $(G_0, k_0)$ \Comment{Tiny No instance}
+\EndIf
+\State $(G, k) \gets $ Closure under Reduction Rule 1-4.
+\If{$|V(G)| \leq 7k^2 + 7k$} \Return $(G, k)$ \Comment{Kernelization Success}
+\ElsIf{$\Delta(G) < 7k$} \Return $(G_0, k_0)$ \Comment{Tiny No instance}
+\Else  
+\State $x \gets x \in V(G), d_G(x) \geq 7k$
+\If{$x$ has $k+1$-flower} \Return $(G - x, k - 1)$ \Comment{Reduction Rule 5} 
+\Else    
+\State \textbf{Assert} : $\exists S_x \subseteq V(G) - x$, hitting all $x$-cycles, $|S_x| \leq 2k$
+\State $\CC \gets $ all components of $G - S_x - x$, connected with $x$
+\If{$\CC$ has more than $k$ cycles} \Return $(G_0, k_0)$
+\Else   
+\State $\CT \gets$ Tree components in $\CC$ joined with $x$ by unique edge.
+\State $S', T' \gets$ apply 2-expansion Lemma with $S_x, \CT$
+\State \Return $(G, k) \gets$ Apply reduction rule 6 with $S', T'$
+\EndIf
+\EndIf 
+\EndIf
+\EndProcedure
+\end{algorithmic}
 
-\begin{proof}
-    
-Suppose that $(G, k)$ is Yes instance. Then, there exists feedback vertex set $X \subseteq V(G)$ whose size is at most $k$. 
-And as we know, $G - X$ is forest. Since $(G, k)$ is irreducible under Reduction Rules(1), $\delta(G) \geq 3$. Hence, 
-\begin{align*}
-    3(|V| - |X|) & \leq \sum_{v \in V - X} d_G(v) \\
-    & = 2|E(G[V-X])| + |E(G[V, V-X])| \\
-    & \leq 2(|V-X| - 1) + \sum_{u \in X} d_G(u) \\
-    & < 2(|V-X| - 1) + d|X|
-\end{align*}
+\end{algorithm}
 
-This implies that 
-\[|V| < (d+1)|X| \leq (d+1)k\]
-And it deduce that $|V-X| < dk$, so 
-\[|E| \leq d|X| + (|V-X|-1) < dk + dk - 1 < 2dk\]
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!white,title=Reduction Rules for FVS kernelization,breakable]
 
-\end{proof}
-
-So here, we can observe that if $|V| \geq (8k + 1)k$ but $\Delta(G) \leq 8k$, it automatically filtered by above lemma, so 
-it is no-instance. Then we can construct following situation. 
-\begin{itemize}
-    \item Apply reduction rule(1). 
-    \item If $|V(G)| < (8k+1)k$, return $(G, k)$.
-    \item Else, $|V(G)| \geq (8k+1)k$, so if $\Delta(G) < 8k$, it is no-instance. 
-    \item Then here, we can obtain $\Delta(G) \geq 8k$. 
-\end{itemize}
-
-For the further step, we define new structures. 
-
-\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Cycle and Flower]
-
-A \textit{x-cycle} is a cycle traversing $x$. In general, it can contain loop and length 2 cycles. However, as we remove 
-all the loops, we consider the length of any $x$-cycle is at least 2. 
-
-A \textit{x-flower} is collection of $x$-cycles such that all of them intersects exactly (only) $x$. We say the order of 
-a $x$-flower is $k$ is there are $k$ $x$-cycles. 
-
-\end{tcolorbox}
-
-Here, suppose that there is a $x$-flower whose size is larger than $k+1$. Then, if we does not choose $x$ for 
-feedback vertex set, we must choose at least $k+1$ vertices from each $x$-cycles. So that, we can update the reduction rules.
- 
-\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Reduction Rule(2)]
-
-
+\begin{enumerate}
+    \item If $x \in V(G)$ has loops, then $(G - x, k - 1)$
+    \item If $x \in V(G), d_G(x) = 0, 1$, then $(G - x, k)$
+    \item If $u, v \in V(G)$ is connected by more than 2 parallel edges, remaining only 2.
+    \item If $x \in V(G), d_G(x) = 2, ux, vx \in E(G)$ then $(G - x + uv, k)$
+    \item If $x \in V(G)$, $x$ has $k+1$-star, then $(G - x, k - 1)$
+    \item Suppose that there exists $x \in V(G)$, $S \subseteq V(G) - x$, $\CT$ is subset of components in $G - S - x$ such that 
     \begin{itemize}
-        \item If there exists $v$ s.t. has any loop, return $(G - v, k - 1)$. 
-        \item If there exists $v$ s.t. $d_G(v) = 1$, return $(G - v, k)$. 
-        \item If $u$, $v$ are connected by more than 3 parallel edges, then remaining only 2. 
-        \item If $d_G(v) = 2$ and not loop, let $xv, yv \in E(G)$. it can be same. Then, return $(G - v + xy, k)$. 
-        This can generate loop or parallel edge. 
-        \item If there exists $x$-flower whose order $\geq k + 1$, return $(G-x, k-1)$
+        \item $\forall \CC \in \CT, G[\CC]$ is tree.
+        \item $\forall \CC \in \CT$, $x$ and $\CC$ is connected by unique edge. 
+        \item $\forall Z \subseteq S$, at least $2|Z|$ components in $\CT$ is connected with $Z$.
     \end{itemize}
+    Then, we obtain new kernel $(G', k')$ by 
+    \begin{itemize}
+        \item Remove all unique edges between $x$ and $\CT$. 
+        \item Make $x$ and all vertices in $S$ connected via double edges. 
+        \item $k' = k$
+    \end{itemize}
+\end{enumerate}
 
+\end{tcolorbox}
+
+Yes, this needs quite long context of proof. 
+
+\chapter{Iterative Compression}
+
+\section{$\CO(5^k)$-time algorithm for Feedback Vertex Set}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Compression FVS]
+
+\textsc{Compression FVS}
+
+\textbf{Input}: Graph $G = (V, E)$ and Feedback Vertex Set $X$ of $G$.
+
+\textbf{Parameter}: $|X|$
+
+\textbf{Output(Decision)}: Does $G$ have another FVS $Y$ such that $|Y| < |X|$?
 
 \end{tcolorbox}
 
-Then, the remaining case is that when there is no $x$-flower of order at least $k + 1$. Define few concepts for this. 
-
-\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=A-path]
-
-For $A \subseteq V(G)$, we say that a path $P$ is an $A$-path if both endpoints of $P$ are in $A$ and 
-no internal vertex of $P$ is in $A$. 
-
-\end{tcolorbox}
+The Iterative Compression method is that, solve original problem via solving its compression version. 
+In this case, we'll study Compression version of \textsc{Feedback Vertex Set} problem.
+Suppose that our graph is evolving by one vertex.
+\[G_1 \rightarrow G_2 \rightarrow \cdots \rightarrow G_n = G\]
+If we know $X_i$, the Feedback Vertex Set of $G_i$, then obviously $X_{i+1} = X_i \cup \{v_{i+1}\}$ become 
+feedback vertex set of $G_{i+1}$. If it doesn't exceed our original budget, it can be the instance for $G_{i+1}$. 
+However, if it exceed our budget, we need to solve \textsc{Compression FVS}$(G_{i+1}, X_{i+1})$. 
+This is sort of dynamic programming, let's formalize this method based on FVS problem. 
 
 \begin{lem}
-    
-Let $G = (V, E)$ and fix one $x \in V$. 
-Then, we can partition $N'(V)$ into two groups: $A_1$ is all neighbors of $x$ does not contain parallel edges, and $A_2$ is anothers. 
-\begin{itemize}
-    \item The maximum order of $x$-flower equals to summation of $|A_2|$ and maximum number of vertex disjoint $A_1$-paths in $G - x - A_2$. 
-    \item $S_x \subseteq V - x$ is a hitting set of all $x$-cycles if and only if $S_x$ contains $A_2$ and $S_x - A_2$ hits all $A_1$-paths of $G - x - A_2$. 
-\end{itemize}
+
+If we can solve \textsc{Compression FVS}$(G, X)$ in time $c^{|X|} \cdot n^d$, then we can solve 
+\textsc{Feedback Vertex Set}$(G, k)$ in time $c^k \cdot n^{d+1}$.
 
 \end{lem}
 
 \begin{proof}
-    Easy
+    
+Let's enumerate vertices of $G$ by 
+\[v_1, v_2, \cdots, v_n, \quad G_i := G[\{v_1, \cdots, v_i\}]\]
+We construct algorithm that we mentioned above. The worst case running time of \textsc{Compression FVS}$(G, X)$ is 
+$c^k \cdot n^d$ since $|X| \leq k$ in our setting. So, the worst case running time of our algorithm is that 
+\[n \times (c^k\cdot n^d) = c^k \cdot n^{d+1}\]
+
 \end{proof}
 
-Then here, we reach : $d_G(x) \geq 8k$ and maximum $x$-flower is order at most $k$. (If not, see last rule of above blue box)
-So here, one can set 
-\[l = k - |A_2| \geq 0, \quad A = A_1, \quad H = G - A_2 - x\]
-Then, we'll use next theorem. 
+Thanks to this lemma, we are sufficient to show that we can solve \textsc{Compression FVS} in such time complexity. 
+In similar way, we'll reduce \textsc{Compression FVS} again into another easier problem. 
 
-\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Gallai's Theorem]
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Disjoint FVS]
 
-Let $G = (V, E)$ and $A \subseteq V$. The maximum number of pairwise vertex-disjoint $A$-paths equals the minimum of 
-\[|X| + \sum_{C \in \CC(G-X)} \lfloor \frac{|A\cap C|}{2} \rfloor\]
-where the minimum is taken over all vertex seubsets $X \subseteq V$ and $\CC(G-X)$ is collection of all connected components of $G - X$. Moreover, both a maximum collection of pairwise vertex-disjoint $A$-paths 
-and a vertex set $X$ minimizing the right-hand side of the equality can be computed in polynomial time. 
+\textsc{Disjoint FVS}
+
+\textbf{Input}: Graph $G = (V, E)$, $X$ is a feedback vertex set of $G$, $k \in \BZ$
+
+\textbf{Parameter}: $k + |\CC(G[X])|$
+
+\textbf{Output}: Does $G$ have disjoint FVS $Y$ (i.e., $X \cap Y = \emptyset$) s.t. $|Y| \leq k$?
 
 \end{tcolorbox}
+
+\begin{algorithm} 
+\caption{Algorithm for Disjoint FVS}
+\begin{algorithmic}[1]
+\Procedure{Disjoint FVS}{$G, X, k$}
+\State $G \gets$ delete all $d_G(v) = 0,1$ vertices  
+\State $F \gets G[V \setminus X]$, $\CC \gets$ components of $G[X]$ \Comment{$F$ is forest}
+\State $\forall x \in F, d_G(x) = 2, |N(x) \cap F| = 1$ then bypass $x$.
+\If{$G$ is acyclic} \Return Yes, by witness : $\emptyset$
+\EndIf
+\If{$G[X]$ contains any cycle} \Return No      
+\EndIf
+\If{$G$ has any cycle and $k <= 0$} \Return No
+\EndIf
+\State $l \gets $ any leaf vertex in $F$
+\If{$\exists C \in \CC$, $l$ incident $C$ with more than 2 edges}
+\State \Return \textsc{Disjoint FVS}$(G - l, X, k-1) \cup \{l\}$
+\ElsIf{No such cases}
+\State \Return \textsc{Disjoint FVS}$(G - l, X, k-1) \cup \{l\}$ $\vee$ \textsc{Disjoint FVS}$(G, X \cup \{l\}, k)$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+
+\end{algorithm}
+
+\begin{lem}
+    
+This algorithm is correctly solves \textsc{Disjoint FVS} in time $\CO^*(2^{\mu(I)})$ where $\mu(I) = k + |\CC(G[X])|$
+
+\end{lem}
+
+\begin{proof}
+    
+Since our goal is find feedback vertex set disjoint with $X$, 
+line 5,6,7 is clearly correct. And for reduction step, if such $x$ in line 4 exists, then 
+when we need to pick $x$, then instead pick its $F$-neighbor, so this also clear. 
+Then suppose that $l$ is leaf in $F$. If line 9 occurs, then $l$ joined in a cycle with such $\CC$. So we must pick $l$ as new FVS. 
+If not occurs, we must consider 2 cases each: $Y$ contains $l$ or not. This is line 12.
+
+For the running time analysis, 
+\[\mu(I = (G, X, k)) = k + |\CC(G[X])|\]
+For each step, if we choose $I' := (G - l, X, k - 1)$ then $\mu(I') = \mu(I) - 1$ so decreases, 
+if we choose $I' := (G, X \cup \{l\}, k)$, since in line 12, $l$ works as \lq bridge' of components of $G[X]$ so 
+$\mu(I') \leq \mu(I) - 1$. So our parameter always strictly decreases at least 1, and the worst branch cases are 2, so the running time would be $\CO^*(2^{\mu(I)})$. 
+This completes proof.
+
+\end{proof}
+
+\begin{lem}
+    
+With above algorithms, we can solve \textsc{Compression FVS} in time $5^{|X|}\cdot n^d$
+
+\end{lem}
+
+\begin{algorithm}
+\caption{Algorithm for Compression FVS}
+\begin{algorithmic}[1]
+\Procedure{Compression FVS}{$G, X$}
+\For{$\forall I \subsetneq X$} 
+\State $\tilde{G} \gets G - I, \tilde{X} \gets X \setminus I, \tilde{k} \gets |\tilde{X}| - 1$
+\If{\textsc{Disjoint FVS}$(\tilde{G}, \tilde{X}, \tilde{k})$ returns No} Continue
+\Else 
+\State $\tilde{Y} \gets \textsc{Disjoint FVS}(\tilde{G}, \tilde{X}, \tilde{k})$
+\State \Return Yes with witness: $I \cup \tilde{Y}$
+\EndIf
+\EndFor
+\State \Return No
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{proof}
+    
+It is obvious that, if this algorithm returns Yes, then such instance $I \cup \tilde{Y}$ is actually 
+smaller size FVS of $G$. This is because we fix $I$, and then find alternatives for $X \setminus I$ vertices to hit all cycles that 
+$X \setminus I$ hit. So this algorithm is complete. How about soundness? Suppose that this algorithm returns No. 
+If the instance $(G, X)$ is actually Yes-instance, then there exists smaller FVS $Y \neq X$ of $G$. 
+Then, we can find $Y \cap X$. Since $I$ iterate all proper subsets of $X$, $I = X \cap Y$ is iterated. 
+Since it doesn't return Yes, so \textsc{Disjoint FVS}$(G - X\cap Y, X - Y, |X - Y| - 1)$ returns No. 
+However, we have remaining parts of $Y$, which is $Y - X$ such that $|Y - X| < |X - Y|$. Since $Y - X$ 
+is FVS of $G - X \cap Y$, this is contradiction to \textsc{Disjoint FVS} is correct. So above algorithm is correct. 
+
+Finally, let's analyze the running time of this algorithm. For each iteration of $I$, 
+\[\mu(G - I, X \setminus I, |X \setminus I| - 1) = |X \setminus I| - 1 + |\CC(\tilde{G}[\tilde{X}])| \leq 2(|X| - i) - 1\]
+So, for the selected subset size $i$, running time will be $\CO^*(2^{2(|X|-i)-1}) = \CO^*(4^{|X|-i})$
+So, running time will be 
+\[\sum_{i=0}^{|X|-1}\binom{|X|}{i} \cdot \CO^*(4^{|X|-i}) \leq (4 + 1)^{|X|}\cdot n^d\]
+
+
+\end{proof}
 
 \end{document}
