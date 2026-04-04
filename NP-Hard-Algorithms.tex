@@ -1090,7 +1090,7 @@ Note that, in this problem we assume that $G$ \textbf{allows multigraphs even lo
 \ElsIf{$\Delta(G) < 7k$} \Return $(G_0, k_0)$ \Comment{Tiny No instance}
 \Else  
 \State $x \gets x \in V(G), d_G(x) \geq 7k$
-\If{$x$ has $k+1$-flower} \Return $(G - x, k - 1)$ \Comment{Reduction Rule 5} 
+\If{$x$ has $k+1$ size $x$-flower} \Return $(G - x, k - 1)$ \Comment{Reduction Rule 5} 
 \Else    
 \State \textbf{Assert} : $\exists S_x \subseteq V(G) - x$, hitting all $x$-cycles, $|S_x| \leq 2k$
 \State $\CC \gets $ all components of $G - S_x - x$, connected with $x$
@@ -1131,7 +1131,251 @@ Note that, in this problem we assume that $G$ \textbf{allows multigraphs even lo
 
 \end{tcolorbox}
 
-Yes, this needs quite long context of proof. 
+Yes, this needs quite long context of proof. Let's do this step-by-step. 
+
+\begin{lem}
+    
+Reduction Rules 1-4 is safe and we can find irreducible kernel $(G, k)$ in polynomial time. 
+Then, $\delta(G) \geq 3$ holds.
+
+\end{lem}
+
+\begin{lem}
+    
+Suppose that $(G, k)$ be the above kernel(RR 1-4). If $(G, k)$ is Yes-instance of \textsc{Feedback Vertex Set}, 
+then following always holds: 
+\[\Delta(G) < d \implies |V| < (d+1)k, \quad |E| < 2dk\]
+In other words, if it is vanished, $(G, k)$ is always No-instance.  
+
+\end{lem}
+
+\begin{proof}
+    
+Since $(G, k)$ is Yes instance and kernel of RR 1-4, we can obtain 
+\[\exists X \subseteq V(G), \quad |X| \leq k, \quad G - X \text{ is forest }, \quad 3 \leq d_G(v) < d\]
+Then, 
+\begin{align*}
+    3 |V - X| \leq \sum_{u \in G - X} d_G(u) &= \big| E(X, G-X) \big| + 2 \big| E(G-X) \big| \\
+    & \leq dk + 2(|V - X| - 1) \tag{Remark 1} \\
+    & \leq 2|V| + (d-2)k - 2 \\
+    & < 2|V| + (d-2)k
+\end{align*}
+
+This implies that 
+\[3|V| - 3k < 2|V| + (d-2)k \implies |V| < (d+1)k\]
+For the edges, 
+\begin{align*}
+    |E| &= \text{edges incident with $X$} + \text{edges does not touch $X$} \\
+    & \leq dk + |V - X| - 1 \\
+    & < 2dk \tag{By Remark 1}
+\end{align*}
+
+\end{proof}
+
+With these, we can run our algorithm until line 7. If size is bounded, then return that as a kernel.
+If size is unbounded by $d = 7k$ into above lemma, it vanishes Lemma 3.4.2. directly. So $(G, k)$ is automatically No instance, 
+so output tiny No-instance here. Now we arrive at line 7. Let's do further analysis with added condition: 
+\[3 \leq \delta(G), 7k \leq \Delta(G), |V| > (7k + 1)k\]
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=$x$-cycle and $x$-flower]
+
+\textit{$x$-cycle} is a cycle such that containing $x$. \textit{$x$-flower} is collection of $x$-cycles such that vertex disjoint 
+except only $x$. The \textit{order} of an $x$-cycle is number of $x$-cycles in that. 
+
+\end{tcolorbox}
+
+With this notion, it is easy to show that line 8 is safe and run in polynomial time with respect to $n$. 
+
+\begin{lem}
+    
+Reduction Rule 5 is safe and run in polynomial time.
+
+\end{lem}
+
+Then now, let's move on to line 10. Here we have that $x$ does not have $k+1$ size flower and meet an assertation: 
+\[\exists S_x \subseteq V(G) - x, \text{ hitting all $x$-cycles, $|S_x| \leq 2k$}\]
+We need to prove that this can be asserted always. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Want To Show]
+
+We want to show that, at line 7, one of following must hold: 
+\begin{itemize}
+    \item $x$ has $k+1$ size of $x$-flower. 
+    \item No more than $k$ flower, then $\exists S_x \subseteq V(G) - x$, hitting all $x$-cycles, $|S_x| \leq 2k$
+\end{itemize}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=A-path]
+
+For $A \subseteq V(G)$, we say that a path $P$ is $A$-path if $|P| \leq 1$ and only endpoints of $P$ are contained in $A$. 
+
+\end{tcolorbox}
+
+We can divide the neighbors of $x$ into 2 groups: 
+\begin{itemize}
+    \item $A_1$: Neighbors of $x$, connected with $x$ by one edge. 
+    \item $A_2$: Neighbors of $x$, connected with $x$ by two edges. 
+\end{itemize}
+In this setting and notion of $A$-paths, we can construct following lemma. 
+
+\begin{lem}
+Let $(G, k)$ be any graph and $x \in V(G)$. Following holds.
+\begin{itemize}
+    \item Maximum order of $x$-flower is summation of $|A_2|$ and maximum number of vertex disjoint $A_1$ paths in $G - x - A_2$. 
+    \item $S_x \subseteq V(G) - x$ hit all $x$-cycles if and only if $S_x$ contains $A_2$ entirely, and $S_x - A_2$ hit all $A_1$ paths in $G - x - A_2$. 
+\end{itemize}
+
+\end{lem}
+
+\begin{proof}
+    
+Easy
+
+\end{proof}
+
+Since we can find $A_2$ directly, our problem is reduced as following. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Want To Show - Reduced Version]
+
+    Let $l := k - |A_2|$ , $A := A_1$, $H = G - x - A_2$. 
+    \begin{itemize}
+        \item There exists $l + 1$ vertex disjoint $A$-paths in $H$. 
+        \item No more than $l$ vertex disjoint $A$-paths, then $\exists S_x \subseteq V(H), S_x$ hit all the $A$-paths in $H$, and $|S_x| \leq 2l$.
+    \end{itemize}
+    
+\end{tcolorbox}
+
+We'll take Gallai's theorem in Graph Theory. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!white,title=Gallai's A-path Theorem]
+
+Let $G = (V, E)$ and $A \subseteq V$. 
+Let's denote the maximum number of vertex disjoint $A$-path in $G$ by $M_A$. 
+\[M_A = \min_{X \subseteq V} \left( |X| + \sum_{C \in \CC(G-X)}\lfloor \frac{A \cap C}{2} \rfloor \right)\]
+$\CC(G-X)$ is collection of all components in $G - X$. And this theorem is algorithmic. i.e., we can find 
+the solution $X$ in polynomial time. 
+\end{tcolorbox}
+
+With this theorem, we can prove our goal in red box. 
+
+\begin{lem}
+    
+Let $G = (V, E)$ be a graph. If there exists at most $l$ vertex disjoint $A$-paths, 
+then we can find $Z$ such that hit all the $A$-paths and $|Z| \leq 2l$. 
+
+\end{lem}
+
+\begin{proof}
+    
+According to the Gallai's Theorem, we can find $X \subseteq V(G)$ such that 
+\[|X| + \sum_{C \in \CC(G-X)} \lfloor \frac{|A\cap C|}{2} \rfloor \leq l\]
+
+Now, we'll construct $Z$ from here. First, add all vertices in $X$ into $Z$. And then, 
+for every component $C$ in $\CC(G - X)$, choose all $A$-vertices except at most one. Then such cardinality of chosen vertices is same with 
+$2 \cdot \lfloor \frac{|A\cap C|}{2}\rfloor$. And then add them into $Z$. Then, 
+\[|Z| = |X| + 2 \sum_{C \in \CC(G - X)} \lfloor \frac{|A\cap C|}{2} \rfloor \leq 2\left(|X| + \sum_{C \in \CC(G - X)} \lfloor \frac{|A\cap C|}{2} \rfloor\right) \leq 2l\]
+Here, this $Z$ hits all $A$-paths. Since we choose quite amount of $A$-vertices, sufficient to consider remaining $A$-vertices and their paths. 
+Remaining vertices are located in each components, at most one in there. So, if there exists any $A$-path, 
+such path must through $X$ and reach to another component. Since $X \subseteq Z$, it is hit by $Z$. 
+\end{proof}
+
+\newpage
+
+Now we arrive at line 11 safely. 
+The next step will be reduction of given graph with $S_x$ where $S_x \subseteq V(G) - x$ hitting all $x$-cycles and $|S_x| \leq 2k$. 
+There remains most treaky part here. Let's rewrite Reduction Rule 6 again. 
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Reduction Rule 6]
+
+Apply condition: there exists $x \in V(G), S \subseteq V - x$ and $\CT \subseteq \CC(G - x - S)$ s.t.
+\begin{itemize}
+    \item $G[C]$ is tree, for each $C \in \CT$
+    \item There exists unique edge between $x$ and each $C$
+    \item $\forall Z \subseteq S$, number of incident components in $\CT$ with $Z$ is more than $2|Z|$ 
+\end{itemize}
+
+Then, reduce the instance $G$ by: 
+
+\begin{itemize}
+    \item Remove all edges between $x$ and $\CT$
+    \item Make every vertices in $S$ is adjacent with $x$ via exactly 2 edges.
+\end{itemize}
+
+\end{tcolorbox}
+
+\begin{lem}
+    
+Reduction Rule 6 is safe.
+
+\end{lem}
+
+\begin{proof}
+    since we changes only the edges incident with $x$, only $x$-cycles are matter. 
+
+($\Rightarrow$) Suppose that $(G, k)$ is Yes instance of FVS. Here, let $X$ be an optimal 
+FVS of $G$. If $x \in X$, since $x$ hit all the newly generated $x$-cycles, so $X$ is also a FVS of $G'$. 
+If $x \notin X$, we'll find another optimal FVS $X^*$ such that $S \subset X$. If we can find, then 
+since $S$ hit all the newly generated $x$-cycles in $G'$, $X^*$ become FVS of $G'$. 
+Let $Z = S \setminus X \neq \emptyset$. For each $z \in Z$, at least 2 components ($\CT_1, \CT_2$) are incident with $z$ in $\CT$ (Apply Condition 3)
+Then since we can find $z \rightarrow \CT_1 \rightarrow x \rightarrow \CT_2$ cycle, $X$ must hit this in $\CT_1$ or $\CT_2$.
+Let's remove all the vertices of $X$ in $\CT$ and add all vertices in $Z$. 
+\[X^* = \left(X \setminus \bigcup_{T \in \CT} V(T) \right) \cup Z\]
+Here, since amount of neighbor components of $Z$ is larger than $2|Z|$, at least $|Z|$ vertices of $|X|$ are included in $\CT$. Since 
+we remove all them and add $Z$, $|X^*| \leq |X|$. And $X^*$ is clearly FVS since all cycles s.t. vertices in $\CT$ covered were hit also vertices in $Z$. So 
+$Z$ hit all the cycles that $X \setminus \bigcup_{T \in \CT} V(T)$ covered, so $X^*$ is FVS. 
+Then $X^*$ is also FVS of $G'$. 
+
+($\Leftarrow$) Here, for any FVS $X'$ of $G'$, $x \in X'$ or $S \subseteq X'$. So both case, optimal FVS $X'$ of 
+$G'$ also be the FVS of $G$. 
+
+\end{proof}
+
+\newpage 
+
+One we must show is that, we can apply Reduction Rule with conditions until line 14 always. 
+Actually, it is possible. 
+
+\begin{lem}
+    
+Let $H$ be a bipartite graph $S \uplus T$. In polynomial time, one can find a set $Z \subset S$ with 
+$|N(Z)| < 2|Z|$ if such $Z$ exists. 
+
+\end{lem}
+
+\begin{proof}
+Using vertex copy of $S$ then K\"onig's theorem and obtain maximum matching. 
+\end{proof}
+
+\begin{lem}
+    
+Let $H$ be a bipartite graph with a bipartition $S \uplus T$ s.t. 
+\begin{itemize}
+    \item every vertex of $T$ adjacent with vertex of $S$
+    \item $|T| \geq 2|S|$
+\end{itemize}
+Then, in polynomial time one can find vertex sets $S' \subseteq S$ and $T' \subseteq T$ such that 
+\begin{itemize}
+    \item $N(T') = S'$ and 
+    \item $|N(Z)| \geq 2|Z|$ for every $Z \subseteq S'$
+\end{itemize}
+
+\end{lem}
+
+\begin{lem}
+    Line 14-16 is always applicable.
+\end{lem}
+
+\begin{proof}
+    
+We have $S_x \subseteq V(G) - x$ such that $|S_x| \leq 2k$ and $S_x$ hits all $x$-cycles. 
+However, $d_G(x) \geq 7k$. Since $S_x$ contains all double edges neighbors of $x$, but there limit is $k$ since no order $k+1$ $x$-flower condition. Implies that, at least $4k$ are not in $S_x$. Moreover, since they have not to construct any $x$-cycles, 
+each of them are incident with tree components in $G - x - S_x$ via unique edges. Here, by imagine that such tree components are vertices, 
+and $S$, they forms bipartite graph. Note that $|\CT| \geq 2|S_x|$ and every $T \in \CT$ is adjacent with at least one vertex of $S$, because 
+in $G$, $T$ does not have leaf. So we can apply Lemma 3.4.8, and obtain $S' \subseteq S_x$, $\CT' \subseteq \CT$. 
+They holds the Apply Condition of Reduction Rule 6.
+
+\end{proof}
 
 \chapter{Iterative Compression}
 
