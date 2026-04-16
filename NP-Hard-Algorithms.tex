@@ -33,7 +33,7 @@ pdfauthor={Hojune Lee},
 
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 \DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
-\newtheorem{thm}{Theorem}[section]
+\newtheorem{thm}{Theorem}[chapter]
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{lem}[thm]{Lemma}
@@ -1523,5 +1523,159 @@ So, running time will be
 
 
 \end{proof}
+
+\chapter{Randomized Algorithms}
+
+\chapter{Tree Decomposition}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=brown!75!black,title=Tree Decomposition]
+Let $G$ be a graph. A \textit{tree decomposition} of $G$ is pair $(T, \chi)$ where $T$ is a tree 
+and $\chi: V(T) \rightarrow 2^{V(G)}$. For each $t \in V(T)$, we say $\chi(t) \subseteq V(G)$ be a \textit{bag} and $(T, \chi)$ satisfy following. 
+\begin{enumerate}
+    \item $\bigcup_{t \in V(T)} \chi(t) = V(G)$
+    \item $\forall e = uv \in E(G), \quad \exists ~ t \in V(T), ~ \{u,v\} \subseteq \chi(t)$
+    \item $\forall v \in V(G)$, $\{t \in V(T)~|~ v \in \chi(t)\}$ forms a subtree of $T$. 
+\end{enumerate}
+\end{tcolorbox}
+
+Note that, this definition is somewhat similar to \textit{topology} on sets. We define the measure that how finer our tree decomposition is, called \textit{width}. 
+
+\begin{defn}
+For each tree decomposition $(T, \chi)$ of $G$, we define \textit{width} by $\max_{t \in V(T)} |\chi(t)| - 1$. 
+i.e., the largest bag size - 1. And we denote the global measure of $G$ by \textit{treewidth} of $G$, defined by 
+\[tw(G) = \min_{(T, \chi)} \text{width}(T, \chi)\]
+\end{defn}
+
+\begin{defn}
+Suppose that $A, B \subseteq V(G)$. We define $(A,B)$-path in $G$ as a path with one endpoint is in $A$ and another is in $B$. 
+Note that $v \in A \cap B$ is trivial $(A, B)$-path. We call that $X$ is an $(A,B)$-seperator in $G$ if 
+every $(A, B)$-path contains a vertex of $X$. We define \textit{contraction} of $G$ by $e = uv \in E(G)$ is an graph modification such that 
+merge $u, v$. Formally, delete $u, v$ and add new vertex $z_{uv}$ and then connect with $N_G(u) \cup N_G(v)$. Denote such modified graph by $G/e$. 
+\end{defn}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Propositions,breakable]
+    \begin{enumerate}
+        \item[(1)] $tw(G) - 1 \leq tw(G - v) \leq tw(G)$
+        \item[(2)] $tw(G) - 1 \leq tw(G - e) \leq tw(G)$
+        \item[(3)] $tw(G) - 1 \leq tw(G/e) \leq tw(G)$
+        \item[(4)] $G$ is a forest $\iff$ $tw(G) \leq 1$  
+    \end{enumerate}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=green!75!black,title=Nice Tree Decomposition]
+
+A nice tree decomposition $(T, \chi)$ of $G$ is a rooted tree decomposition such that each $t \in V(T)$ is one of the following types: 
+\begin{itemize}
+    \item Leaf node: $t$ is a leaf node of $T$
+    \item Introduce node: $t$ has exactly one child $t'$ holds that $\chi(t) = \chi(t') \cup \{v\}$ for some $v \in V(G)$. 
+    \item Forget node: $t$ has exactly one child $t'$ and holds that $\chi(t) = \chi(t') \setminus \{v\}$ for some $v \in V(G)$. 
+    \item Join node: $t$ has exactly 2 children $t_1, t_2$ such that $\chi(t) = \chi(t_1) = \chi(t_2)$. 
+\end{itemize}
+
+\end{tcolorbox}
+
+\begin{lem}
+    Let $(T, \chi)$ be a tree decomposition of $G$ of width $w$. In linear time, we transform this into a nice tree decomposition $(T', \chi')$ of $G$ of width $w$. Moreover, 
+    \begin{itemize}
+        \item Root node and Leaf nodes are empty bags. (If we want)
+        \item $|V(T')| \leq 4wn$. 
+    \end{itemize}
+\end{lem}
+
+\begin{proof}
+    Let root be empty bag and for every leaf node of $T$ we append empty bag. Choose any $t \in V(T)$. 
+    Following that, if $t$ has $d$ children then we construct $d$-times of join nodes and connect each children into unique child of generated join nodes. 
+    If $t$ has unique child, remove $\chi(t) \setminus \chi(t')$ one-by-one via introduce nodes and add $\chi(t') \setminus \chi(t)$ one-by-one via forget nodes. 
+\end{proof}
+
+\begin{defn}
+    We define that $T_t$ be the subtree of $T$ rooted at $t$. 
+    \[V_t = \bigcup_{b \in V(T_t)} \chi(b) \quad G_t = G[V_t]\]
+\end{defn}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Lemma]
+
+Let $(T, \chi)$ be a nice tree decomposition of $G$. Suppose that $t \in V(T)$ is an 
+introduce node with its unique child $t'$ such that $\chi(t) = \chi(t') \cup \{v\}$ for some $v \in V(G)$. 
+Then, 
+\[N_{G_t}(v) \subseteq \chi(t)\]
+
+\end{tcolorbox}
+
+\begin{proof}
+    $T_t$ become a tree decomposition of $G_t$. However, the root is unique node of tree decomposition 
+    such that containing $v$, so every edges incident with $v$ in $G_t$ is contained in $t$. This 
+    exactly implies $N_{G_t}(v) \subseteq \chi(t)$
+\end{proof}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=blue!75!black,title=Lemma]
+
+Let $(T, \chi)$ be a nice tree decomposition of $G$. Suppose that $t \in V(T)$ is an 
+join node with $t_1, t_2$ then $V_{t_1} \cap V_{t_2} = \chi(t)$. 
+
+\end{tcolorbox}
+
+\begin{proof}
+    Note that vertices appears in $V_{t_1} \cap V_{t_2}$ must be contained in $\chi(t)$ since 
+    $(T, \chi)$ is a tree decomposition. 
+\end{proof}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=red!75!black,title=Maximum Independent Set]
+
+For a graph $G = (V, E)$, find a maximum size of independent set of $G$. 
+
+\end{tcolorbox}
+
+\begin{thm}
+There is an algorithm which, given $G$ and non-redundant tree decomposition $(T, \chi)$ such that width $\leq w$, 
+finds a maximum size of independent set of $G$ in time $\CO(w2^w \cdot n)$. 
+\end{thm}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=gray!75!black,title=Step 0]
+
+We first transform $(T, \chi)$ into a \textit{nice tree decomposition} via Lemma 6.3. 
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=gray!75!black,title=Step 1]
+
+Define following for $t \in V(T)$ and $S \subseteq \chi(t)$: 
+\[\textsc{IND}_t[S] = \begin{cases}
+    \text{Size of maximum independent set $I$ of $G_t$ such that $I \cap \chi(t) = S$} \\
+    \perp \text{ if no such $I$ exists }
+\end{cases}\]
+Remark that Maximum size of independent set of $G$ is $\textsc{IND}_r[\emptyset]$. 
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=violet!75!white,title=Planning Mode]
+    \[\text{(Initialization) At each leaf $t$ of $T$, compute a basis cases for DP.}\] 
+    \[\Downarrow\]
+    \[\text{(Recurrence) For forget/introduce/join node $t$, define recursive relation}\]
+    \[\Downarrow\]
+    \[\text{(Runtime efficiency) Compute $\textsc{IND}_t[S]$ for each $S \subseteq \chi(t)$ efficiently.}\]
+\end{tcolorbox}
+
+\begin{rem}
+Note that our algorithm answer with non-witness i.e., does not compute actual maximum independent set. 
+\end{rem}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=gray!75!black,title=Initialization]
+
+Let $t$ be any leaf node of $T$. For every $S \subseteq \chi(t)$, we can easily compute 
+\[\textsc{IND}_t[S] = \begin{cases}
+    |S| & S \text{ is an independent set} \\
+    \perp & \text{ otherwise }
+\end{cases}\]
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=yellow!10!white,colframe=gray!75!black,title=Recurrence]
+
+We construct following relations for each nodes' type. 
+
+\end{tcolorbox}
+
+If $t$ is a forget node, then the child $t'$ holds that $\chi(t) = \chi(t') \setminus \{v\}$. For $S \subseteq \chi(t)$, 
+\[\]
 
 \end{document}
